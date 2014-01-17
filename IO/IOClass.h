@@ -7,6 +7,13 @@
 class IOClass
 {
 public:
+  H5::H5File file;
+  inline void load(std::string& outputPrefix)
+  {
+    H5::H5File outFile(outputPrefix+".h5", H5F_ACC_TRUNC);
+    file = outFile;
+  }
+
   /// Gets for HDF5 traits
   // Get type
   template <class T>
@@ -26,7 +33,7 @@ public:
 
   // Read
   template<class T>
-  inline void Read(H5::H5File file, const std::string& dataset_name, T& data)
+  inline void Read(const std::string& dataset_name, T& data)
   {
     H5::DataSet dataset = file.openDataSet(dataset_name);
     H5::DataSpace dataspace = dataset.getSpace();
@@ -36,7 +43,7 @@ public:
 
   // Write
   template<class T>
-  inline void Write(H5::H5File file, const std::string& dataset_name, T& data)
+  inline void Write(const std::string& dataset_name, T& data)
   {
     H5::PredType datatype = GetHDF5Datatype(data);
     datatype.setOrder(H5T_ORDER_LE);
@@ -46,14 +53,14 @@ public:
   }
 
   // Create Group
-  inline void CreateGroup(H5::H5File file, const std::string& group_name)
+  inline void CreateGroup(const std::string& group_name)
   {
     H5::Group group = file.createGroup(group_name);
   }
 
   // Create extendable dataset
   template<class T>
-  inline void CreateExtendableDataSet(H5::H5File file, const std::string& prefix, const std::string& dataset_name, T& data)
+  inline void CreateExtendableDataSet(const std::string& prefix, const std::string& dataset_name, T& data)
   {
     // Get data information
     int data_rank = GetHDF5Rank(data);
@@ -101,7 +108,7 @@ public:
 
   // Extend dataset
   template<class T>
-  inline void AppendDataSet(H5::H5File file, const std::string& prefix, const std::string& dataset_name, T& data)
+  inline void AppendDataSet(const std::string& prefix, const std::string& dataset_name, T& data)
   {
     // Get data information
     int data_rank = GetHDF5Rank(data);
