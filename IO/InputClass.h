@@ -35,6 +35,18 @@ public:
     return xmlString;
   }
 
+  inline string getText(string name)
+  {
+    string str = string(getChild(name).getText());
+    return str;
+  }
+
+  inline string getText()
+  {
+    string str = string(xNode.getText());
+    return str;
+  }
+
   template <class T>
   inline T getAttribute(string name)
   {
