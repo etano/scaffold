@@ -7,6 +7,7 @@
 #include <fstream>
 #include <iostream>
 #include <assert.h>
+#include <vector>       // std::vector
 #if USE_MPI
   #include <mpi.h>
 #endif
