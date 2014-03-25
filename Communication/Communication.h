@@ -2,7 +2,7 @@
 #define COMMUNICATION_H
 
 #include "../config.h"
-#include <cstdint>
+//#include <stdint>
 
 
 namespace COMM
@@ -35,7 +35,7 @@ namespace COMM
   // Template to retrieve traits of any MPI object
   template <class T>
   struct mpi_type_traits {
-    static inline MPI_Datatype get_type(T&& val);
+    static inline MPI_Datatype get_type(T& val);
     static inline size_t get_size(T& val);
     static inline void* get_addr(T& val);
   };
@@ -43,7 +43,7 @@ namespace COMM
   // Specialization of mpi_type_traits for primitive types
 #define PRIMITIVE(Type, MpiType) \
         template<> \
-        inline MPI_Datatype mpi_type_traits<Type>::get_type(Type&&) { return MpiType; } \
+        inline MPI_Datatype mpi_type_traits<Type>::get_type(Type&) { return MpiType; } \
         template<> \
         inline size_t mpi_type_traits<Type>::get_size(Type&) { return 1; } \
         template<> \
@@ -73,7 +73,7 @@ namespace COMM
   // Specialization of mpi_type_traits for armadillo types
 #define ARMATYPE(Type, ElemType, MpiType) \
         template<> \
-        inline MPI_Datatype mpi_type_traits<Type>::get_type(Type&&) { return MpiType; } \
+        inline MPI_Datatype mpi_type_traits<Type>::get_type(Type&) { return MpiType; } \
         template<> \
         inline size_t mpi_type_traits<Type>::get_size(Type& val) { return val.size(); } \
         template<> \

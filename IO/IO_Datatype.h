@@ -8,7 +8,7 @@ namespace IO {
   // Template to retrieve traits of any HDF5 object
   template <class T>
   struct hdf5_type_traits {
-    static H5::PredType get_type(T&& val);
+    static H5::PredType get_type(T& val);
     static inline size_t get_size(T& val);
     static inline void* get_addr(T& val);
     static inline const hsize_t* get_shape(T& val);
@@ -18,7 +18,7 @@ namespace IO {
   // Specialization of hdf5_type_traits for primitive types
 #define PRIMITIVE(Type, H5PredType, H5Type) \
         template<> \
-        inline H5::PredType hdf5_type_traits<Type>::get_type(Type&&) { return H5Type; } \
+        inline H5::PredType hdf5_type_traits<Type>::get_type(Type&) { return H5Type; } \
         template<> \
         inline size_t hdf5_type_traits<Type>::get_size(Type&) { return 1; } \
         template<> \
@@ -50,7 +50,7 @@ namespace IO {
   // Specialization of hdf5_type_traits for armadillo types
 #define ARMATYPE(Type, ElemType, H5PredType, H5Type) \
         template<> \
-        inline H5::PredType hdf5_type_traits<Type>::get_type(Type&&) { return H5Type; } \
+        inline H5::PredType hdf5_type_traits<Type>::get_type(Type&) { return H5Type; } \
         template<> \
         inline size_t hdf5_type_traits<Type>::get_size(Type& val) { return val.size(); } \
         template<> \
