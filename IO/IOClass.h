@@ -7,11 +7,17 @@
 class IOClass
 {
 public:
-  H5::H5File file;
+  string output;
   inline void load(std::string& outputPrefix)
   {
-    H5::H5File outFile(outputPrefix+".h5", H5F_ACC_TRUNC);
-    file = outFile;
+    // Assign output string
+    output = outputPrefix+".h5";
+
+    // Create file
+    H5::H5File* file = new H5::H5File(output, H5F_ACC_TRUNC);
+
+    // Delete pointer
+    delete file;
   }
 
   /// Gets for HDF5 traits
@@ -35,33 +41,59 @@ public:
   template<class T>
   inline void Read(const std::string& dataset_name, T& data)
   {
-    H5::DataSet dataset = file.openDataSet(dataset_name);
-    H5::DataSpace dataspace = dataset.getSpace();
+    // Open file
+    H5::H5File* file = new H5::H5File(output, H5F_ACC_RDONLY);
+
+    // Do read
+    H5::DataSet* dataset = new H5::DataSet(file->openDataSet(dataset_name));
+    H5::DataSpace dataspace = dataset->getSpace();
     H5::PredType datatype = GetHDF5Datatype(data);
-    dataset.read(GetHDF5Addr(data), datatype, dataspace, dataspace);
+    dataset->read(GetHDF5Addr(data), datatype, dataspace, dataspace);
+
+    // Delete pointers
+    delete dataset;
+    delete file;
   }
 
   // Write
   template<class T>
   inline void Write(const std::string& dataset_name, T& data)
   {
+    // Open file
+    H5::H5File* file = new H5::H5File(output, H5F_ACC_RDWR);
+
+    // Do write
     H5::PredType datatype = GetHDF5Datatype(data);
     datatype.setOrder(H5T_ORDER_LE);
     H5::DataSpace dataspace(GetHDF5Rank(data), GetHDF5Shape(data));
-    H5::DataSet dataset = file.createDataSet(dataset_name, datatype, dataspace);
-    dataset.write(GetHDF5Addr(data), datatype);
+    H5::DataSet* dataset = new H5::DataSet(file->createDataSet(dataset_name, datatype, dataspace));
+    dataset->write(GetHDF5Addr(data), datatype);
+
+    // Delete pointers
+    delete dataset;
+    delete file;
   }
 
   // Create Group
   inline void CreateGroup(const std::string& group_name)
   {
-    H5::Group group = file.createGroup(group_name);
+    // Open file
+    H5::H5File* file = new H5::H5File(output, H5F_ACC_RDWR);
+
+    // Create group
+    H5::Group group = file->createGroup(group_name);
+
+    // Delete pointer
+    delete file;
   }
 
   // Create extendable dataset
   template<class T>
   inline void CreateExtendableDataSet(const std::string& prefix, const std::string& dataset_name, T& data)
   {
+    // Open file
+    H5::H5File* file = new H5::H5File(output, H5F_ACC_RDWR);
+
     // Get data information
     int data_rank = GetHDF5Rank(data);
     const hsize_t* data_shape = GetHDF5Shape(data);
@@ -90,26 +122,33 @@ public:
 
     // Create a new dataset within the file using cparms creation properties.
     std::string full_name = prefix + dataset_name;
-    H5::DataSet dataset = file.createDataSet(full_name, datatype, mspace, cparms);
+    H5::DataSet* dataset = new H5::DataSet(file->createDataSet(full_name, datatype, mspace, cparms));
 
     // Extend the dataset.
-    dataset.extend(dims);
+    dataset->extend(dims);
 
     // Select a hyperslab.
-    H5::DataSpace fspace = dataset.getSpace();
+    H5::DataSpace fspace = dataset->getSpace();
     hsize_t offset[rank];
     for (int i=0; i<rank; i++)
       offset[i] = 0;
     fspace.selectHyperslab(H5S_SELECT_SET, dims, offset);
 
     // Write original data into hyperslab
-    dataset.write(GetHDF5Addr(data), datatype, mspace, fspace);
+    dataset->write(GetHDF5Addr(data), datatype, mspace, fspace);
+
+    // Delete pointers
+    delete dataset;
+    delete file;
   }
 
   // Extend dataset
   template<class T>
   inline void AppendDataSet(const std::string& prefix, const std::string& dataset_name, T& data)
   {
+    // Open file
+    H5::H5File* file = new H5::H5File(output, H5F_ACC_RDWR);
+
     // Get data information
     int data_rank = GetHDF5Rank(data);
     const hsize_t* data_shape = GetHDF5Shape(data);
@@ -117,10 +156,10 @@ public:
 
     // Open data set
     std::string full_name = prefix + dataset_name;
-    H5::DataSet dataset = file.openDataSet(full_name);
+    H5::DataSet* dataset = new H5::DataSet(file->openDataSet(full_name));
 
     // Get old dataspace properties
-    H5::DataSpace fspace = dataset.getSpace();
+    H5::DataSpace fspace = dataset->getSpace();
     int rank = data_rank + 1;
     hsize_t dims_old[rank], maxdims[rank];
     fspace.getSimpleExtentDims(dims_old, maxdims);
@@ -130,10 +169,10 @@ public:
     dims_new[0] = dims_old[0]+1;
     for (int i=1; i<rank; i++)
       dims_new[i] = data_shape[i-1];
-    dataset.extend(dims_new);
+    dataset->extend(dims_new);
 
     // Select a hyperslab.
-    fspace = dataset.getSpace();
+    fspace = dataset->getSpace();
     hsize_t offset[rank], dims_orig[rank];
     offset[0] = dims_old[0];
     dims_orig[0] = 1;
@@ -147,7 +186,11 @@ public:
     H5::DataSpace mspace(rank, dims_orig);
 
     // Write the data to the hyperslab.
-    dataset.write(GetHDF5Addr(data), datatype, mspace, fspace);
+    dataset->write(GetHDF5Addr(data), datatype, mspace, fspace);
+
+    // Delete pointers
+    delete dataset;
+    delete file;
   }
 
 };
