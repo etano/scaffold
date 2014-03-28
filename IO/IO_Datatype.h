@@ -28,6 +28,7 @@ namespace IO {
         template<> \
         inline const int hdf5_type_traits<Type>::get_rank(Type& val) { return 1; }
   PRIMITIVE(char, H5::IntType, H5::PredType::NATIVE_CHAR);
+  PRIMITIVE(string, H5::StrType, H5::PredType::NATIVE_CHAR);
   PRIMITIVE(short, H5::IntType, H5::PredType::NATIVE_SHORT);
   PRIMITIVE(int, H5::IntType, H5::PredType::NATIVE_INT);
   PRIMITIVE(long, H5::IntType, H5::PredType::NATIVE_LONG);
@@ -62,9 +63,11 @@ namespace IO {
   ARMATYPE(Imatrix, int, H5::IntType, H5::PredType::NATIVE_INT);
   ARMATYPE(Ivector, int, H5::IntType, H5::PredType::NATIVE_INT);
 #if PRECISION==double
+  ARMATYPE(Tcube, RealType, H5::FloatType, H5::PredType::NATIVE_DOUBLE);
   ARMATYPE(Tmatrix, RealType, H5::FloatType, H5::PredType::NATIVE_DOUBLE);
   ARMATYPE(Tvector, RealType, H5::FloatType, H5::PredType::NATIVE_DOUBLE);
 #elif PRECISION==single
+  ARMATYPE(Tcube, RealType, H5::FloatType, H5::PredType::NATIVE_FLOAT);
   ARMATYPE(Tmatrix, RealType, H5::FloatType, H5::PredType::NATIVE_FLOAT);
   ARMATYPE(Tvector, RealType, H5::FloatType, H5::PredType::NATIVE_FLOAT);
 #endif
