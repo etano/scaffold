@@ -63,13 +63,29 @@ namespace IO {
   ARMATYPE(Imatrix, int, H5::IntType, H5::PredType::NATIVE_INT);
   ARMATYPE(Ivector, int, H5::IntType, H5::PredType::NATIVE_INT);
 #if PRECISION==double
-  ARMATYPE(Tcube, RealType, H5::FloatType, H5::PredType::NATIVE_DOUBLE);
   ARMATYPE(Tmatrix, RealType, H5::FloatType, H5::PredType::NATIVE_DOUBLE);
   ARMATYPE(Tvector, RealType, H5::FloatType, H5::PredType::NATIVE_DOUBLE);
 #elif PRECISION==single
-  ARMATYPE(Tcube, RealType, H5::FloatType, H5::PredType::NATIVE_FLOAT);
   ARMATYPE(Tmatrix, RealType, H5::FloatType, H5::PredType::NATIVE_FLOAT);
   ARMATYPE(Tvector, RealType, H5::FloatType, H5::PredType::NATIVE_FLOAT);
+#endif
+#undef ARMATYPE
+
+#define ARMATYPE(Type, ElemType, H5PredType, H5Type) \
+        template<> \
+        inline H5::PredType hdf5_type_traits<Type>::get_type(Type&) { return H5Type; } \
+        template<> \
+        inline size_t hdf5_type_traits<Type>::get_size(Type& val) { return val.size(); } \
+        template<> \
+        inline void* hdf5_type_traits<Type>::get_addr(Type& val) { return val.memptr(); } \
+        template<> \
+        inline const hsize_t* hdf5_type_traits<Type>::get_shape(Type& val) { const hsize_t shape[] = {val.n_slices,val.n_rows,val.n_cols}; return shape; } \
+        template<> \
+        inline const int hdf5_type_traits<Type>::get_rank(Type& val) { return 3; }
+#if PRECISION==double
+  ARMATYPE(Tcube, RealType, H5::FloatType, H5::PredType::NATIVE_DOUBLE);
+#elif PRECISION==single
+  ARMATYPE(Tcube, RealType, H5::FloatType, H5::PredType::NATIVE_FLOAT);
 #endif
 #undef ARMATYPE
 
