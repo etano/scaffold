@@ -44,6 +44,7 @@ template<class T>
 inline Cmatrix cinv(T val) { return arma::inv(val); }
 template<class T>
 inline Tmatrix inv(T val) { return arma::inv(val); }
+inline RealType mag(Tvector &val) { return arma::norm(val,2); }
 
 
 #endif
