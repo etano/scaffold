@@ -50,7 +50,10 @@ public:
     H5::DataSet* dataset = new H5::DataSet(file->openDataSet(dataset_name));
     H5::DataSpace dataspace = dataset->getSpace();
     H5::AtomType datatype = GetHDF5Datatype(data);
-    dataset->read(GetHDF5Addr(data), datatype, dataspace, dataspace);
+
+    //try {
+      dataset->read(GetHDF5Addr(data), datatype, dataspace, dataspace);
+    //}
 
     // Delete pointers
     delete dataset;
@@ -102,7 +105,7 @@ public:
     H5::AtomType datatype = GetHDF5Datatype(data);
 
     // Create the data space with one unlimited dimension.
-    int rank = data_rank + 1;
+    int rank = data_rank;
     hsize_t dims[rank];
     hsize_t maxdims[rank];
     dims[0] = 1;
@@ -162,7 +165,7 @@ public:
 
     // Get old dataspace properties
     H5::DataSpace fspace = dataset->getSpace();
-    int rank = data_rank + 1;
+    int rank = data_rank;
     hsize_t dims_old[rank], maxdims[rank];
     fspace.getSimpleExtentDims(dims_old, maxdims);
 

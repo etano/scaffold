@@ -61,13 +61,13 @@ inline double RNG::unifRand( const double a , const double b )
 // Generate a random integer between 1 and a given value.
 // param n the largest value 
 // return a uniform random value in [1,...,n]
-inline long RNG::unifRand( const long n )
+inline long RNG::unifRand (const long n)
 {
   return RanGen.IRandom(1,n);
 }
 
 // Generate a uniform random vector of length 1
-inline void RNG::unifRand( Tvector& r )
+inline void RNG::unifRand (Tvector& r)
 {
   for (unsigned int iD = 0; iD < r.n_elem; iD += 1) 
     r(iD) = unifRand(-1,1);
