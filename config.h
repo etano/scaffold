@@ -27,6 +27,7 @@ typedef complex<float> ComplexType;
 typedef int IntType;
 
 typedef arma::Cube<RealType> Tcube;
+typedef arma::Cube<ComplexType> Ccube;
 typedef arma::Mat<RealType> Tmatrix;
 typedef arma::Mat<ComplexType> Cmatrix;
 typedef arma::Col<RealType> Tvector;
@@ -44,7 +45,13 @@ template<class T>
 inline Cmatrix cinv(T val) { return arma::inv(val); }
 template<class T>
 inline Tmatrix inv(T val) { return arma::inv(val); }
-inline RealType mag(Tvector &val) { return arma::norm(val,2); }
+template<class T>
+inline ComplexType cdot(T val1, T val2) { return arma::cdot(val1,val2); }
+template<class T>
+inline RealType dot(T val1, T val2) { return arma::dot(val1,val2); }
 
+inline RealType mag(Tvector &val) { return arma::norm(val,2); }
+inline double cmag2 (const ComplexType &z1, const ComplexType &z2) { return (z1.real()*z2.real() + z1.imag()*z2.imag()); }
+inline double cmag (const ComplexType &z1, const ComplexType &z2) { return (sqrt(cmag2(z1,z2))); }
 
 #endif
