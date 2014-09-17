@@ -1,6 +1,9 @@
 #ifndef CONFIG
 #define CONFIG
 
+#if !DEBUG
+  #define ARMA_NO_DEBUG
+#endif
 #include <armadillo>
 #include <cstring>
 #include <string>
