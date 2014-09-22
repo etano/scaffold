@@ -1,6 +1,7 @@
 #ifndef CONFIG
 #define CONFIG
 
+#define ARMA_NO_DEBUG
 #include <armadillo>
 #include <cstring>
 #include <string>
@@ -37,6 +38,11 @@ typedef arma::Col<IntType> Ivector;
 typedef arma::Mat<bool> Bmatrix;
 typedef arma::Col<bool> Bvector;
 
+//template<class T> using vec = arma::Col<T>;
+//template<class T> using mat = arma::Mat<T>;
+//template<class T> using cube = arma::Cube<T>;
+template<class T> using field = arma::field<T>;
+
 template<class T>
 inline ComplexType cdet(T val) { return arma::det(val); }
 template<class T>
@@ -49,8 +55,8 @@ template<class T>
 inline ComplexType cdot(T val1, T val2) { return arma::cdot(val1,val2); }
 template<class T>
 inline RealType dot(T val1, T val2) { return arma::dot(val1,val2); }
-
 inline RealType mag(Tvector &val) { return arma::norm(val,2); }
+
 inline double cmag2 (const ComplexType &z1, const ComplexType &z2) { return (z1.real()*z2.real() + z1.imag()*z2.imag()); }
 inline double cmag (const ComplexType &z1, const ComplexType &z2) { return (sqrt(cmag2(z1,z2))); }
 
