@@ -42,7 +42,7 @@ typedef arma::Col<bool> Bvector;
 //template<class T> using vec = arma::Col<T>;
 //template<class T> using mat = arma::Mat<T>;
 //template<class T> using cube = arma::Cube<T>;
-//template<class T> using field = arma::field<T>;
+template<class T> using field = arma::field<T>;
 
 template<class T>
 inline ComplexType cdet(T val) { return arma::det(val); }
