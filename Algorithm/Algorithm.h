@@ -1,6 +1,19 @@
 #include<vector>
 #include<algorithm>
 
+inline int factorial(const int x)
+{
+  return (x == 1 ? x : x * factorial(x - 1));
+}
+
+inline int n_choose_k(const int n, const int k)
+{
+  int n_factorial_over_n_minus_k_factorial = 1;
+  for (int i=n; i>n-k; --i)
+    n_factorial_over_n_minus_k_factorial *= i;
+  return n_factorial_over_n_minus_k_factorial/factorial(k);
+}
+
 inline bool fequal(RealType a, RealType b, RealType tol)
 {
   if (abs(a-b) < tol)
@@ -46,6 +59,16 @@ inline bool next_combination(const Iterator first, Iterator k, const Iterator la
    }
    std::rotate(first,k,last);
    return false;
+}
+
+template <typename T>
+void genPerm(std::vector< std::vector<T> >& vs, std::vector<T> vals)
+{
+  std::sort(vals.begin(), vals.end());
+  do {
+    vs.push_back(vals);
+  } while(std::next_permutation(vals.begin(),vals.end()));
+
 }
 
 template <typename T>

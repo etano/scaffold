@@ -7,7 +7,7 @@
 class RNG
 {
 private:
-  std::mt19937 rng;  // make instance of random number generator
+  std::minstd_rand0 rng;  // make instance of random number generator
 protected:
 public:
   // Constructor
