@@ -2,7 +2,6 @@
 #define CONFIG
 
 #define ARMA_NO_DEBUG
-#define ARMA_DONT_USE_CXX11
 #include <armadillo>
 #include <cstring>
 #include <string>

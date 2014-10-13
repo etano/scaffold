@@ -12,6 +12,7 @@ namespace IO {
     static inline size_t get_size(T& val);
     static inline void* get_addr(T& val);
     static inline const hsize_t* get_shape(T& val);
+    static inline const int get_dim(T& val, int d);
     static inline const int get_rank(T& val);
   };
 
@@ -25,6 +26,8 @@ namespace IO {
         inline void* hdf5_type_traits<Type>::get_addr(Type& val) { return &val; } \
         template<> \
         inline const hsize_t* hdf5_type_traits<Type>::get_shape(Type& val) { const hsize_t shape[] = {1}; return shape; } \
+        template<> \
+        inline const int hdf5_type_traits<Type>::get_dim(Type& val, int d) { return 1; } \
         template<> \
         inline const int hdf5_type_traits<Type>::get_rank(Type& val) { return 1; }
   PRIMITIVE(char, H5::IntType, H5::PredType::NATIVE_CHAR);
@@ -59,6 +62,8 @@ namespace IO {
         template<> \
         inline const hsize_t* hdf5_type_traits<Type>::get_shape(Type& val) { const hsize_t shape[] = {val.n_cols,val.n_rows}; return shape; } \
         template<> \
+        inline const int hdf5_type_traits<Type>::get_dim(Type& val, int d) { if (d == 0) { return val.n_rows; } else { return val.n_cols; } } \
+        template<> \
         inline const int hdf5_type_traits<Type>::get_rank(Type& val) { return 2; }
   ARMATYPE(Imatrix, int, H5::IntType, H5::PredType::NATIVE_INT);
   ARMATYPE(Ivector, int, H5::IntType, H5::PredType::NATIVE_INT);
@@ -80,6 +85,8 @@ namespace IO {
         inline void* hdf5_type_traits<Type>::get_addr(Type& val) { return val.memptr(); } \
         template<> \
         inline const hsize_t* hdf5_type_traits<Type>::get_shape(Type& val) { const hsize_t shape[] = {val.n_slices,val.n_rows,val.n_cols}; return shape; } \
+        template<> \
+        inline const int hdf5_type_traits<Type>::get_dim(Type& val, int d) { if (d == 0) { return val.n_slices; } else if (d == 1) { return val.n_rows; } else { return val.n_cols; } } \
         template<> \
         inline const int hdf5_type_traits<Type>::get_rank(Type& val) { return 3; }
 #if PRECISION==double

@@ -35,6 +35,9 @@ public:
   // Get constant pointer to shape array
   template <class T>
   inline const hsize_t* GetHDF5Shape(T &val) { return IO::hdf5_type_traits<T>::get_shape(val); }
+  // Get size of given dimension d
+  template <class T>
+  inline const int GetHDF5Dim(T &val, int d) { return IO::hdf5_type_traits<T>::get_dim(val,d); }
   // Get rank of object
   template <class T>
   inline const int GetHDF5Rank(T &val) { return IO::hdf5_type_traits<T>::get_rank(val); }
@@ -70,7 +73,10 @@ public:
     // Do write
     H5::AtomType datatype(GetHDF5Datatype(data));
     datatype.setOrder(H5T_ORDER_LE);
-    H5::DataSpace dataspace(GetHDF5Rank(data), GetHDF5Shape(data));
+    hsize_t data_shape[GetHDF5Rank(data)];
+    for (int i=0; i<GetHDF5Rank(data); ++i)
+      data_shape[i] = GetHDF5Dim(data,i);
+    H5::DataSpace dataspace(GetHDF5Rank(data), data_shape);
     H5::DataSet* dataset = new H5::DataSet(file->createDataSet(dataset_name, datatype, dataspace));
     dataset->write(GetHDF5Addr(data), datatype);
 
@@ -101,7 +107,9 @@ public:
 
     // Get data information
     int data_rank = GetHDF5Rank(data);
-    const hsize_t* data_shape = GetHDF5Shape(data);
+    hsize_t data_shape[GetHDF5Rank(data)];
+    for (int i=0; i<GetHDF5Rank(data); ++i)
+      data_shape[i] = GetHDF5Dim(data,i);
     H5::AtomType datatype = GetHDF5Datatype(data);
 
     // Create the data space with one unlimited dimension.
@@ -156,7 +164,9 @@ public:
 
     // Get data information
     int data_rank = GetHDF5Rank(data);
-    const hsize_t* data_shape = GetHDF5Shape(data);
+    hsize_t data_shape[GetHDF5Rank(data)];
+    for (int i=0; i<GetHDF5Rank(data); ++i)
+      data_shape[i] = GetHDF5Dim(data,i);
     H5::AtomType datatype = GetHDF5Datatype(data);
 
     // Open data set
@@ -210,10 +220,13 @@ inline void IOClass::Read(const std::string& dataset_name, std::string& data)
   H5::H5File* file = new H5::H5File(fileName, H5F_ACC_RDONLY);
 
   // Do read
+  const int MAX_NAME_LENGTH = 1024;
+  char t_data[MAX_NAME_LENGTH];
   H5::DataSet* dataset = new H5::DataSet(file->openDataSet(dataset_name));
   H5::DataSpace dataspace = dataset->getSpace();
   H5::DataType datatype = dataset->getDataType();
-  dataset->read(data, datatype, dataspace, dataspace);
+  dataset->read(t_data, datatype, dataspace, dataspace);
+  data = string(t_data);
 
   // Delete pointers
   delete dataset;
@@ -228,10 +241,16 @@ inline void IOClass::Write(const std::string& dataset_name, std::string& data)
   H5::H5File* file = new H5::H5File(fileName, H5F_ACC_RDWR);
 
   // Do write
-  H5::StrType datatype(0, H5T_VARIABLE);
-  H5::DataSpace dataspace(GetHDF5Rank(data), GetHDF5Shape(data));
+  const int MAX_NAME_LENGTH = 1024;
+  char t_data[MAX_NAME_LENGTH];
+  strcpy(t_data, data.c_str());
+  H5::StrType datatype(H5::PredType::C_S1, MAX_NAME_LENGTH);
+  int data_rank = 1;
+  hsize_t data_shape[1];
+  data_shape[0] = 1;
+  H5::DataSpace dataspace(data_rank, data_shape);
   H5::DataSet* dataset = new H5::DataSet(file->createDataSet(dataset_name, datatype, dataspace));
-  dataset->write(GetHDF5Addr(data), datatype);
+  dataset->write(t_data, datatype);
 
   // Delete pointers
   delete dataset;
