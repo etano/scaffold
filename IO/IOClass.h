@@ -85,6 +85,28 @@ public:
     delete file;
   }
 
+  // Rewrite
+  template<class T>
+  inline void Rewrite(const std::string& dataset_name, T& data)
+  {
+    // Open file
+    H5::H5File* file = new H5::H5File(fileName, H5F_ACC_RDWR);
+
+    // Do write
+    H5::AtomType datatype(GetHDF5Datatype(data));
+    datatype.setOrder(H5T_ORDER_LE);
+    hsize_t data_shape[GetHDF5Rank(data)];
+    for (int i=0; i<GetHDF5Rank(data); ++i)
+      data_shape[i] = GetHDF5Dim(data,i);
+    H5::DataSpace dataspace(GetHDF5Rank(data), data_shape);
+    H5::DataSet* dataset = new H5::DataSet(file->openDataSet(dataset_name));
+    dataset->write(GetHDF5Addr(data), datatype);
+
+    // Delete pointers
+    delete dataset;
+    delete file;
+  }
+
   // Create Group
   inline void CreateGroup(const std::string& group_name)
   {
@@ -250,6 +272,30 @@ inline void IOClass::Write(const std::string& dataset_name, std::string& data)
   data_shape[0] = 1;
   H5::DataSpace dataspace(data_rank, data_shape);
   H5::DataSet* dataset = new H5::DataSet(file->createDataSet(dataset_name, datatype, dataspace));
+  dataset->write(t_data, datatype);
+
+  // Delete pointers
+  delete dataset;
+  delete file;
+}
+
+// Rewrite
+template<>
+inline void IOClass::Rewrite(const std::string& dataset_name, std::string& data)
+{
+  // Open file
+  H5::H5File* file = new H5::H5File(fileName, H5F_ACC_RDWR);
+
+  // Do write
+  const int MAX_NAME_LENGTH = 1024;
+  char t_data[MAX_NAME_LENGTH];
+  strcpy(t_data, data.c_str());
+  H5::StrType datatype(H5::PredType::C_S1, MAX_NAME_LENGTH);
+  int data_rank = 1;
+  hsize_t data_shape[1];
+  data_shape[0] = 1;
+  H5::DataSpace dataspace(data_rank, data_shape);
+  H5::DataSet* dataset = new H5::DataSet(file->openDataSet(dataset_name));
   dataset->write(t_data, datatype);
 
   // Delete pointers
