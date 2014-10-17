@@ -113,7 +113,7 @@ public:
     H5::AtomType datatype = GetHDF5Datatype(data);
 
     // Create the data space with one unlimited dimension.
-    int rank = data_rank;
+    int rank = data_rank + 1;
     hsize_t dims[rank];
     hsize_t maxdims[rank];
     dims[0] = 1;
@@ -175,7 +175,7 @@ public:
 
     // Get old dataspace properties
     H5::DataSpace fspace = dataset->getSpace();
-    int rank = data_rank;
+    int rank = data_rank + 1;
     hsize_t dims_old[rank], maxdims[rank];
     fspace.getSimpleExtentDims(dims_old, maxdims);
 
