@@ -35,7 +35,7 @@ IF(EINSPLINE_INCLUDE_DIR AND EINSPLINE_LIBS)
 ELSE()
     ExternalProject_Add(
       meinspline_project
-      URL https://github.com/etano/meinspline/archive/master.tar.gz
+      URL http://github.com/etano/meinspline/archive/master.tar.gz
       SOURCE_DIR ${SCAFFOLD_DEPENDS_DIR}/meinspline
       CONFIGURE_COMMAND ${SCAFFOLD_DEPENDS_DIR}/meinspline/configure --prefix=${SCAFFOLD_INSTALL_DIR}
       BUILD_COMMAND make
