@@ -1,54 +1,5 @@
-# Find Lapack/Blas/Atlas/MKL/XLmass/ESSL/...
-SET(LA_LIBS "")
-IF(${CMAKE_SYSTEM_PROCESSOR} MATCHES "ppc") # This covers GNU and IBM Compilers on BGQ
-  # Find Lapack/BLAS BGQ
-  SET(LAPACK_LIBRARY /usr/local/tools/lapack/lib/liblapack.a)
-  SET(BLAS_LIBRARY /usr/local/tools/blas/lib/libblas.a)
-  SET(ESSL_LIBRARY /usr/local/tools/essl/5.1/lib/libesslsmpbg.a)
-  SET(XLMASS_LIBRARY /opt/ibmcmp/xlmass/bg/7.3/bglib64/libmass.a
-                     /opt/ibmcmp/xlmass/bg/7.3/bglib64/libmassv.a)
-  SET(FORTRAN_LIBRARY /opt/ibmcmp/xlf/bg/14.1/bglib64/libxlf90_r.a
-                      /opt/ibmcmp/xlf/bg/14.1/bglib64/libxl.a
-                      /opt/ibmcmp/xlf/bg/14.1/bglib64/libxlfmath.a
-                      /opt/ibmcmp/xlf/bg/14.1/bglib64/libxlfpmt4.a
-                      /opt/ibmcmp/xlf/bg/14.1/bglib64/libxlfpmt8.a
-                      /opt/ibmcmp/xlf/bg/14.1/bglib64/libxlopt.a)
-  SET(LA_LIBS ${LAPACK_LIBRARY} ${BLAS_LIBRARY} ${ESSL_LIBRARY}
-    ${XLMASS_LIBRARY} ${FORTRAN_LIBRARY} -ldl)
-ELSEIF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-  SET(CMAKE_CXX_FLAGS "-framework Accelerate ${CMAKE_CXX_FLAGS}")
-  SET(CMAKE_C_FLAGS "-framework Accelerate ${CMAKE_C_FLAGS}")
-  MESSAGE(STATUS "Using Mac OS Accelerate framework.")
-ELSE()
-    # Find MKL
-    FIND_PATH(MKL_INCLUDE_DIR mkl.h)
-    FIND_PATH(MKL_LINK_DIR libmkl_core.a)
-    SET(MKL_FOUND false)
-    IF(MKL_INCLUDE_DIR)
-      SET(MKL_FOUND true)
-    ELSE()
-      FIND_PATH(MKL_INCLUDE_DIR mkl.h ${MKL_HOME} ${MKL_HOME}/include $ENV{MKL_HOME} $ENV{MKL_HOME}/include)
-      FIND_PATH(MKL_LINK_DIR libmkl_core.a ${MKL_HOME} ${MKL_HOME}/lib/intel64  $ENV{MKL_HOME} $ENV{MKL_HOME}/lib/intel64)
-      IF(MKL_INCLUDE_DIR)
-        SET(MKL_FOUND true)
-      ENDIF()
-    ENDIF()
-    IF(MKL_FOUND)
-      SET(MKL_LIBS mkl_intel_lp64 mkl_intel_thread mkl_core iomp5 pthread m mkl_scalapack_lp64 mkl_blacs_intelmpi_lp64)
-      #SET(MKL_LIBS "-L$ENV{MKL_HOME};mkl_intel_lp64;mkl_sequential;mkl_core")
-      LINK_DIRECTORIES(/opt/intel/lib/intel64)
-      LINK_DIRECTORIES(${MKL_LINK_DIR})
-      SET(LA_LIBS ${MKL_LIBS})
-    ELSE()
-      FIND_LIBRARY(LAPACK_LIBS lapack /usr/lib /usr/local/lib)
-      FIND_LIBRARY(BLAS_LIBS blas /usr/lib /usr/local/lib)
-      IF(LAPACK_LIBS AND BLAS_LIBS)
-        SET(LA_LIBS ${LAPACK_LIBS} ${BLAS_LIBS})
-        LINK_LIBRARIES(${LA_LIBS})
-      ENDIF()
-    ENDIF()
-    MESSAGE(STATUS "LA_LIBS=${LA_LIBS}")
-ENDIF()
+# Find optimize linear algebra routines
+INCLUDE(${SCAFFOLD_DIR}/CMake/FindLA.cmake)
 
 # Find HDF5
 INCLUDE(ExternalProject)
