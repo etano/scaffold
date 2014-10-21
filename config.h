@@ -2,6 +2,10 @@
 #define CONFIG
 
 #define ARMA_NO_DEBUG
+#define ARMA_DONT_USE_WRAPPER
+#define ARMA_USE_LAPACK
+#define ARMA_USE_BLAS
+#define ARMA_USE_CXX11
 #include <armadillo>
 #include <cstring>
 #include <string>
