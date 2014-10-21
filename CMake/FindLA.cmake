@@ -9,6 +9,9 @@ if(APPLE)
   ## Under MacOS, the current version of FindCLAPACK can get confused between two incompatible
   ## versions of "clapack.h" (one provided by the system and one provided by ATLAS).
   ## As such, use of ATLAS under MacOS is disabled for now.
+  set(CMAKE_CXX_FLAGS "-framework Accelerate ${CMAKE_CXX_FLAGS}")  # or "-framework accelerate" ?
+  set(CMAKE_C_FLAGS "-framework Accelerate ${CMAKE_C_FLAGS}")  # or "-framework accelerate" ?
+  message(STATUS "MacOS X detected. Added '-framework Accelerate' to compiler flags")
   
 else()
   include(${SCAFFOLD_DIR}/CMake/FindMKL.cmake)
@@ -137,17 +140,5 @@ else()
     set(LA_LIBS ${LA_LIBS} ${CLAPACK_LIBRARIES})
   endif()
   
-endif()
-
-
-if(APPLE)
-  set(LA_LIBS ${LA_LIBS} "-framework Accelerate")  # or "-framework accelerate" ?
-  message(STATUS "MacOS X detected. Added '-framework Accelerate' to compiler flags")
-  
-  if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
-  message(STATUS "Clang compiler on MacOS X detected. Added '-stdlib=libc++' to compiler flags")
-  endif()
-
 endif()
 
