@@ -66,8 +66,8 @@ ELSE()
       hdf5_project
       URL http://www.hdfgroup.org/ftp/HDF5/current/src/hdf5-1.8.13.tar.gz
       SOURCE_DIR ${SCAFFOLD_DEPENDS_DIR}/hdf5
-      CONFIGURE_COMMAND ${SCAFFOLD_DEPENDS_DIR}/hdf5/configure --prefix=${SCAFFOLD_INSTALL_DIR} --enable-cxx &> config.out
-      BUILD_COMMAND make &> make.out
+      CONFIGURE_COMMAND ${SCAFFOLD_DEPENDS_DIR}/hdf5/configure --prefix=${SCAFFOLD_INSTALL_DIR} --enable-cxx
+      BUILD_COMMAND make
     )
     SET(HDF5_LIBS hdf5 hdf5_cpp)
     MESSAGE(STATUS "HDF5_HOME not found. Installing in SCAFFOLD_DEPENDS_DIR.")
@@ -86,8 +86,8 @@ ELSE()
       meinspline_project
       URL https://github.com/etano/meinspline/archive/master.tar.gz
       SOURCE_DIR ${SCAFFOLD_DEPENDS_DIR}/meinspline
-      CONFIGURE_COMMAND ${SCAFFOLD_DEPENDS_DIR}/meinspline/configure --prefix=${SCAFFOLD_INSTALL_DIR} &> config.out
-      BUILD_COMMAND make &> make.out
+      CONFIGURE_COMMAND ${SCAFFOLD_DEPENDS_DIR}/meinspline/configure --prefix=${SCAFFOLD_INSTALL_DIR}
+      BUILD_COMMAND make
     )
     SET(EINSPLINE_LIBS einspline)
     MESSAGE(STATUS "EINSPLINE_HOME not found. Installing in SCAFFOLD_DEPENDS_DIR.")
