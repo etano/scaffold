@@ -31,21 +31,21 @@ typedef complex<float> ComplexType;
 #endif
 typedef int IntType;
 
-typedef arma::Cube<RealType> Tcube;
-typedef arma::Cube<ComplexType> Ccube;
-typedef arma::Mat<RealType> Tmatrix;
-typedef arma::Mat<ComplexType> Cmatrix;
-typedef arma::Col<RealType> Tvector;
-typedef arma::Col<ComplexType> Cvector;
-typedef arma::Mat<IntType> Imatrix;
-typedef arma::Col<IntType> Ivector;
-typedef arma::Mat<bool> Bmatrix;
-typedef arma::Col<bool> Bvector;
-
-//template<class T> using vec = arma::Col<T>;
-//template<class T> using mat = arma::Mat<T>;
-//template<class T> using cube = arma::Cube<T>;
+template<class T> using vec = arma::Col<T>;
+template<class T> using mat = arma::Mat<T>;
+template<class T> using cube = arma::Cube<T>;
 template<class T> using field = arma::field<T>;
+
+typedef cube<RealType> Tcube;
+typedef cube<ComplexType> Ccube;
+typedef mat<RealType> Tmatrix;
+typedef mat<ComplexType> Cmatrix;
+typedef vec<RealType> Tvector;
+typedef vec<ComplexType> Cvector;
+typedef mat<IntType> Imatrix;
+typedef vec<IntType> Ivector;
+typedef mat<bool> Bmatrix;
+typedef vec<bool> Bvector;
 
 template<class T>
 inline ComplexType cdet(T val) { return arma::det(val); }
