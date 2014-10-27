@@ -7,7 +7,7 @@
 class RNG
 {
 private:
-  std::minstd_rand0 rng;  // make instance of random number generator
+  std::mt19937 rng;  // make instance of random number generator
 protected:
 public:
   // Constructor
@@ -33,26 +33,17 @@ public:
 
 // Generate a random number between 0 and 1
 // return a uniform number in [0,1].
-inline RealType RNG::unifRand()
-{
-  return u_dist(rng);
-}
+inline RealType RNG::unifRand() { return u_dist(rng); }
 
 // Generate a random number in a real interval.
 // param a one end point of the interval
 // param b the other end of the interval
 // return a inform rand numberin [a,b].
-inline RealType RNG::unifRand(const RealType a, const RealType b)
-{
-  return (b-a)*unifRand() + a;
-}
+inline RealType RNG::unifRand(const RealType a, const RealType b) { return (b-a)*unifRand() + a; }
 
 // Generate a random integer between 1 and a given value.
 // param n the largest value return a uniform random value in [1,...,n]
-inline long RNG::unifRand (const long n)
-{
-  return floor(unifRand()*n+1.);
-}
+inline long RNG::unifRand (const long n) { return floor(unifRand()*n+1.); }
 
 // Generate a uniform random vector of length 1
 inline void RNG::unifRand(Tvector& r)
@@ -70,11 +61,7 @@ inline void RNG::unifRand(Tvector& r, const RealType l)
 }
 
 // Generate a normal distribution random number
-inline RealType RNG::normRand(const RealType m, const RealType s)
-{
-  /* mean m, standard deviation s */
-  return normal_dist(rng)*s + m;
-}
+inline RealType RNG::normRand(const RealType m, const RealType s) { return normal_dist(rng)*s + m; }
 
 // Generate a normal random vector of length 1
 inline void RNG::normRand(Tvector& r, const RealType m, const RealType s)
