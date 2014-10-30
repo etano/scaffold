@@ -1,5 +1,6 @@
-#include<vector>
-#include<algorithm>
+#include <vector>
+#include <algorithm>
+#include <map>
 
 inline int factorial(const int x)
 {
