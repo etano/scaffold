@@ -32,9 +32,6 @@ public:
   // Get size of whole object
   template <class T>
   inline size_t GetHDF5Size(T &val) { return IO::hdf5_type_traits<T>::get_size(val); }
-  // Get constant pointer to shape array
-  template <class T>
-  inline const hsize_t* GetHDF5Shape(T &val) { return IO::hdf5_type_traits<T>::get_shape(val); }
   // Get size of given dimension d
   template <class T>
   inline const int GetHDF5Dim(T &val, int d) { return IO::hdf5_type_traits<T>::get_dim(val,d); }
