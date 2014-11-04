@@ -99,8 +99,9 @@ endif()
 if(MKL_FOUND OR ACMLMP_FOUND OR ACML_FOUND)
   
   if(MKL_FOUND)
-    set(LA_LIBS ${LA_LIBS} ${MKL_LIBRARIES})
     
+    set(LA_LIBS ${LA_LIBS} ${MKL_LIBRARIES})
+
     if(ACMLMP_FOUND OR ACML_FOUND)
       message(STATUS "*** Intel MKL as well as AMD ACML libraries were found.")
       message(STATUS "*** Using only the MKL library to avoid linking conflicts.")
