@@ -7,12 +7,14 @@ IF(EINSPLINE_INCLUDE_DIR AND EINSPLINE_LIBS)
     MESSAGE(STATUS "EINSPLINE_LIBS=${EINSPLINE_LIBS}")
 ELSE()
     IF(${SSE2_FOUND} OR ${SSE3_FOUND} OR ${SSE4_1_FOUND})
-      SET(ENABLE_SSE "--enable-sse")
+      SET(ENABLE_SSE --enable-sse)
+      MESSAGE(STATUS "Enabling SSE for Einspline")
     ENDIF()
     ExternalProject_Add(
       meinspline_project
       URL http://github.com/etano/meinspline/archive/master.tar.gz
       SOURCE_DIR ${SCAFFOLD_DEPENDS_DIR}/meinspline
+      UPDATE_COMMAND autoreconf -i
       CONFIGURE_COMMAND ${SCAFFOLD_DEPENDS_DIR}/meinspline/configure ${ENABLE_SSE} --prefix=${SCAFFOLD_INSTALL_DIR}
       BUILD_COMMAND make
     )
