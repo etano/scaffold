@@ -41,6 +41,8 @@ template<class T, class U>
 inline U det(T &val) { return arma::det(val); }
 template<class T, class U>
 inline U inv(T &val) { return arma::inv(val); }
+template<class T, class U>
+inline U inv(T &val1, T &val2) { return arma::inv(val1,val2); }
 template<class T>
 inline RealType mag(T &val) { return arma::norm(val,2); }
 template<class T>
