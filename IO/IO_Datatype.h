@@ -76,7 +76,7 @@ namespace IO {
         template<> \
         inline void* hdf5_type_traits<Type>::get_addr(Type& val) { return val.memptr(); } \
         template<> \
-        inline const int hdf5_type_traits<Type>::get_dim(Type& val, int d) { if (d == 0) { return val.n_rows; } else { return val.n_cols; } } \
+        inline const int hdf5_type_traits<Type>::get_dim(Type& val, int d) { if (d == 0) { return val.n_cols; } else { return val.n_rows; } } \
         template<> \
         inline const int hdf5_type_traits<Type>::get_rank(Type& val) { return 2; }
   ARMATYPE(Imatrix, int, H5::IntType, H5::PredType::NATIVE_INT);
@@ -95,7 +95,7 @@ namespace IO {
         template<> \
         inline void* hdf5_type_traits<Type>::get_addr(Type& val) { return val.memptr(); } \
         template<> \
-        inline const int hdf5_type_traits<Type>::get_dim(Type& val, int d) { if (d == 0) { return val.n_slices; } else if (d == 1) { return val.n_rows; } else { return val.n_cols; } } \
+        inline const int hdf5_type_traits<Type>::get_dim(Type& val, int d) { if (d == 0) { return val.n_slices; } else if (d == 1) { return val.n_cols; } else { return val.n_rows; } } \
         template<> \
         inline const int hdf5_type_traits<Type>::get_rank(Type& val) { return 3; }
 #if PRECISION==double
