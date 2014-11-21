@@ -6,7 +6,7 @@ Utilities for fast parallel communication and IO wrapped neatly in C++
 Requirements
 ------------
 
-As of right now, scaffold relies on [armadillo](http://arma.sourceforge.net/).
+As of right now, scaffold relies on [armadillo](http://arma.sourceforge.net/), [hdf5](http://www.hdfgroup.org/HDF5/), and [libxml](http://xmlsoft.org/).
 
 Usage
 -----

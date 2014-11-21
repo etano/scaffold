@@ -6,14 +6,8 @@ LINK_DIRECTORIES(${SCAFFOLD_INSTALL_DIR}/lib)
 # Find optimize linear algebra routines
 INCLUDE(${SCAFFOLD_DIR}/CMake/FindLA.cmake)
 
-# Find SSE
-INCLUDE(${SCAFFOLD_DIR}/CMake/FindSSE.cmake)
-
 # Find HDF5
 INCLUDE(${SCAFFOLD_DIR}/CMake/FindHDF5.cmake)
-
-# Find Einspline
-INCLUDE(${SCAFFOLD_DIR}/CMake/FindEinspline.cmake)
 
 # Find Armadillo
 INCLUDE(${SCAFFOLD_DIR}/CMake/FindArmadillo.cmake)
