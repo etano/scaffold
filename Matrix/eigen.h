@@ -1,6 +1,7 @@
 #ifndef EIGEN_H
 #define EIGEN_H
 
+#define EIGEN_NO_DEBUG
 #include <eigen3/Eigen/Eigen>
 
 // Basic types
