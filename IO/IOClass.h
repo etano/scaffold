@@ -1,13 +1,13 @@
 #ifndef IO_H
 #define IO_H
 
-#include "../config.h"
+#include "../types.h"
 #include "IO_Datatype.h"
 
 class IOClass
 {
 public:
-  string fileName;
+  std::string fileName;
   inline void load(std::string& tmpFileName)
   {
     fileName = tmpFileName;
@@ -245,7 +245,7 @@ inline void IOClass::Read(const std::string& dataset_name, std::string& data)
   H5::DataSpace dataspace = dataset->getSpace();
   H5::DataType datatype = dataset->getDataType();
   dataset->read(t_data, datatype, dataspace, dataspace);
-  data = string(t_data);
+  data = std::string(t_data);
 
   // Delete pointers
   delete dataset;

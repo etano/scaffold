@@ -1,8 +1,9 @@
 #ifndef RNG_H
 #define RNG_H
 
-#include "../config.h"
+#include <iostream>
 #include <random>
+#include "../types.h"
 
 class RNG
 {
@@ -25,10 +26,10 @@ public:
   RealType unifRand();
   RealType unifRand(const RealType a, const RealType b);
   long unifRand(const long n);
-  void unifRand(Tvector& r);
-  void unifRand(Tvector& r, const RealType l);
+  void unifRand(vec<RealType>& r);
+  void unifRand(vec<RealType>& r, const RealType l);
   RealType normRand(const RealType m, const RealType s);
-  void normRand(Tvector& r, const RealType m, const RealType s);
+  void normRand(vec<RealType>& r, const RealType m, const RealType s);
 };
 
 // Generate a random number between 0 and 1
@@ -46,15 +47,15 @@ inline RealType RNG::unifRand(const RealType a, const RealType b) { return (b-a)
 inline long RNG::unifRand (const long n) { return floor(unifRand()*n+1.); }
 
 // Generate a uniform random vector of length 1
-inline void RNG::unifRand(Tvector& r)
+inline void RNG::unifRand(vec<RealType>& r)
 {
-  for (unsigned int iD=0; iD<r.n_elem; iD++)
+  for (unsigned int iD=0; iD<r.size(); iD++)
     r(iD) = unifRand(-1,1);
-  r /= norm(r,2);
+  r /= mag(r);
 }
 
 // Generate a uniform random vector of length l
-inline void RNG::unifRand(Tvector& r, const RealType l)
+inline void RNG::unifRand(vec<RealType>& r, const RealType l)
 {
   unifRand(r);
   r *= l;
@@ -64,9 +65,9 @@ inline void RNG::unifRand(Tvector& r, const RealType l)
 inline RealType RNG::normRand(const RealType m, const RealType s) { return normal_dist(rng)*s + m; }
 
 // Generate a normal random vector of length 1
-inline void RNG::normRand(Tvector& r, const RealType m, const RealType s)
+inline void RNG::normRand(vec<RealType>& r, const RealType m, const RealType s)
 {
-  for (unsigned int iD=0; iD<r.n_elem; iD++)
+  for (unsigned int iD=0; iD<r.size(); iD++)
     r(iD) = normRand(m,s);
 }
 

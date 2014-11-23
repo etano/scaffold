@@ -1,9 +1,13 @@
 #ifndef COMMUNICATION_H
 #define COMMUNICATION_H
 
-#include "../config.h"
-//#include <stdint>
-
+#if USE_MPI
+  #include <mpi.h>
+#endif
+#if USE_OPENMP
+  #include <omp.h>
+#endif
+#include "../types.h"
 
 namespace COMM
 {
@@ -40,7 +44,7 @@ namespace COMM
     static inline void* get_addr(T& val);
   };
 
-  // Specialization of mpi_type_traits for primitive types
+// Specialization of mpi_type_traits for primitive types
 #define PRIMITIVE(Type, MpiType) \
         template<> \
         inline MPI_Datatype mpi_type_traits<Type>::get_type(Type&) { return MpiType; } \
@@ -70,28 +74,55 @@ namespace COMM
 
 #undef PRIMITIVE
 
-  // Specialization of mpi_type_traits for armadillo types
-#define ARMATYPE(Type, ElemType, MpiType) \
-        template<> \
-        inline MPI_Datatype mpi_type_traits<Type>::get_type(Type&) { return MpiType; } \
-        template<> \
-        inline size_t mpi_type_traits<Type>::get_size(Type& val) { return val.size(); } \
-        template<> \
-        inline void* mpi_type_traits<Type>::get_addr(Type& val) { return val.memptr(); }
-  ARMATYPE(Imatrix, int, MPI::INT);
-  ARMATYPE(Ivector, int, MPI::INT);
-#if PRECISION==double
-  ARMATYPE(Tmatrix, RealType, MPI::DOUBLE);
-  ARMATYPE(Tvector, RealType, MPI::DOUBLE);
-  ARMATYPE(Cmatrix, ComplexType, MPI::DOUBLE_COMPLEX);
-  ARMATYPE(Cvector, ComplexType, MPI::DOUBLE_COMPLEX);
-#elif PRECISION==single
-  ARMATYPE(Tmatrix, RealType, MPI::FLOAT);
-  ARMATYPE(Tvector, RealType, MPI::FLOAT);
-  ARMATYPE(Cmatrix, ComplexType, MPI::COMPLEX);
-  ARMATYPE(Cvector, ComplexType, MPI::COMPLEX);
+// Specialization of mpi_type_traits for armadillo types
+#ifdef USE_ARMADILLO
+  #define ARMATYPE(Type, ElemType, MpiType) \
+          template<> \
+          inline MPI_Datatype mpi_type_traits<Type>::get_type(Type&) { return MpiType; } \
+          template<> \
+          inline size_t mpi_type_traits<Type>::get_size(Type& val) { return val.size(); } \
+          template<> \
+          inline void* mpi_type_traits<Type>::get_addr(Type& val) { return val.memptr(); }
+    ARMATYPE(mat<int>, int, MPI::INT);
+    ARMATYPE(vec<int>, int, MPI::INT);
+  #if PRECISION==double
+    ARMATYPE(mat<RealType>, RealType, MPI::DOUBLE);
+    ARMATYPE(vec<RealType>, RealType, MPI::DOUBLE);
+    ARMATYPE(mat<ComplexType>, ComplexType, MPI::DOUBLE_COMPLEX);
+    ARMATYPE(vec<ComplexType>, ComplexType, MPI::DOUBLE_COMPLEX);
+  #elif PRECISION==single
+    ARMATYPE(mat<RealType>, RealType, MPI::FLOAT);
+    ARMATYPE(vec<RealType>, RealType, MPI::FLOAT);
+    ARMATYPE(mat<ComplexType>, ComplexType, MPI::COMPLEX);
+    ARMATYPE(vec<ComplexType>, ComplexType, MPI::COMPLEX);
+  #endif
+  #undef ARMATYPE
 #endif
-#undef ARMATYPE
+
+// Specialization of mpi_type_traits for eigen types
+#ifdef USE_EIGEN
+  #define EIGENTYPE(Type, ElemType, MpiType) \
+          template<> \
+          inline MPI_Datatype mpi_type_traits<Type>::get_type(Type&) { return MpiType; } \
+          template<> \
+          inline size_t mpi_type_traits<Type>::get_size(Type& val) { return val.size(); } \
+          template<> \
+          inline void* mpi_type_traits<Type>::get_addr(Type& val) { return val.data(); }
+    EIGENTYPE(mat<int>, int, MPI::INT);
+    EIGENTYPE(vec<int>, int, MPI::INT);
+  #if PRECISION==double
+    EIGENTYPE(mat<RealType>, RealType, MPI::DOUBLE);
+    EIGENTYPE(vec<RealType>, RealType, MPI::DOUBLE);
+    EIGENTYPE(mat<ComplexType>, ComplexType, MPI::DOUBLE_COMPLEX);
+    EIGENTYPE(vec<ComplexType>, ComplexType, MPI::DOUBLE_COMPLEX);
+  #elif PRECISION==single
+    EIGENTYPE(mat<RealType>, RealType, MPI::FLOAT);
+    EIGENTYPE(vec<RealType>, RealType, MPI::FLOAT);
+    EIGENTYPE(mat<ComplexType>, ComplexType, MPI::COMPLEX);
+    EIGENTYPE(vec<ComplexType>, ComplexType, MPI::COMPLEX);
+  #endif
+  #undef EIGENTYPE
+#endif
 
 #else // Serial version
   inline void Init (int argc, char **argv) {}
@@ -126,10 +157,10 @@ public:
   void SetWorld(); // Sets this communicator to be that of all the processes (i.e. MPI_WORLD)
   int MyProc();
   int NumProcs();
-  string MyHost();
+  std::string MyHost();
   void BarrierSync();
   void Split(int color, CommunicatorClass &newComm);
-  void Subset(Imatrix &ranks, CommunicatorClass &newComm);
+  void Subset(vec<int> &ranks, CommunicatorClass &newComm);
 
   /// Gets for MPI traits
   // Get type
@@ -237,8 +268,14 @@ public:
   {
     int nProcs = NumProcs();
     int myProc = MyProc();
+#ifdef USE_ARMADILLO
     int rows = fromBuff.n_rows;
     int cols = fromBuff.n_cols;
+#endif
+#ifdef USE_EIGEN
+    int rows = fromBuff.rows();
+    int cols = fromBuff.cols();
+#endif
     int displacements[nProcs];
     int recvCounts[nProcs];
     int currCol = 0;
@@ -284,8 +321,14 @@ public:
   {
     int nProcs = NumProcs();
     int myProc = MyProc();
+#ifdef USE_ARMADILLO
     int rows = fromBuff.n_rows;
     int cols = fromBuff.n_cols;
+#endif
+#ifdef USE_EIGEN
+    int rows = fromBuff.rows();
+    int cols = fromBuff.cols();
+#endif
     int displacements[nProcs];
     int sendCounts[nProcs];
     int currCol = 0;
@@ -293,24 +336,25 @@ public:
       int procCols = cols/nProcs + ((cols%nProcs)>proc);
       displacements[proc] = rows*currCol;
       sendCounts[proc] = rows*procCols;
-      if (proc == myProc)
+      if (proc == myProc) {
         toBuff.set_size(rows,procCols);
+      }
       currCol += procCols;
     }
     return Scatterv(fromProc, fromBuff, toBuff, sendCounts, displacements);
   }
 
   // AllGatherCols
-  int AllGatherCols (Tmatrix &buff);
+  int AllGatherCols (mat<RealType> &buff);
 
 #else   // Serial version
   inline void SetWorld(){}
   inline int MyProc() {return 0;}
   inline int NumProcs() {return 1;}
-  inline string MyHost() {return "0";}
+  inline std::string MyHost() {return "0";}
   inline void BarrierSync() {}
   inline void Split(int color, CommunicatorClass &newComm) {}
-  inline void Subset(Imatrix ranks, CommunicatorClass &newComm)
+  inline void Subset(vec<int> &ranks, CommunicatorClass &newComm)
   {
     if (ranks.size() != 1) {
       cerr << "Serial verion of code does not support nontrivial subsets. Exiting.\n";
@@ -348,7 +392,7 @@ public:
   inline int Scatterv(int fromProc, T &fromBuff, T &toBuff, int* sendCounts, int* displacements) {toBuff = fromBuff;}
   template<class T>
   inline int ScatterCols(int fromProc, T &fromBuff, T &toBuff) {toBuff = fromBuff;}
-  inline int AllGatherCols (Tmatrix &buff) {}
+  inline int AllGatherCols (mat<RealType> &buff) {}
 #endif
 };
 

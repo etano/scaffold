@@ -28,7 +28,7 @@ int CommunicatorClass::NumProcs()
   return nProcs;
 }
 
-string CommunicatorClass::MyHost()
+std::string CommunicatorClass::MyHost()
 {
   int len;
   char hostname[MPI_MAX_PROCESSOR_NAME];
@@ -46,11 +46,16 @@ void CommunicatorClass::Split(int color, CommunicatorClass &newComm)
   MPI_Comm_split(MPIComm, color, 0, &(newComm.MPIComm));
 }
 
-void CommunicatorClass::Subset(Imatrix &ranks, CommunicatorClass &newComm)
+void CommunicatorClass::Subset(vec<int> &ranks, CommunicatorClass &newComm)
 {
   MPI_Group myGroup, newGroup;
   MPI_Comm_group (MPIComm, &myGroup);
+#ifdef USE_ARMADILLO
   MPI_Group_incl(myGroup, ranks.size(), ranks.memptr(), &newGroup);
+#endif
+#ifdef USE_EIGEN
+  MPI_Group_incl(myGroup, ranks.size(), ranks.data(), &newGroup);
+#endif
   MPI_Comm_create(MPIComm, newGroup, &(newComm.MPIComm));
 }
 
@@ -60,12 +65,18 @@ void CommunicatorClass::Subset(Imatrix &ranks, CommunicatorClass &newComm)
  * @param toBuff Reference to receiving matrix
  * return the MPI status
  */
-int CommunicatorClass::AllGatherCols(Tmatrix &buff)
+int CommunicatorClass::AllGatherCols(mat<RealType> &buff)
 {
   int nProcs = NumProcs();
   int myProc = MyProc();
+#ifdef USE_ARMADILLO
   int rows = buff.n_rows;
   int cols = buff.n_cols;
+#endif
+#ifdef USE_EIGEN
+  int rows = buff.rows();
+  int cols = buff.cols();
+#endif
   int displacements[nProcs];
   int receiveCounts[nProcs];
   int sendCount;
@@ -81,7 +92,12 @@ int CommunicatorClass::AllGatherCols(Tmatrix &buff)
     }
     currCol += procCols;
   }
+#ifdef USE_ARMADILLO
   receiveBuf = buff.memptr();
+#endif
+#ifdef USE_EIGEN
+  receiveBuf = buff.data();
+#endif
   return MPI_Allgatherv(sendBuf, sendCount, MPI_DOUBLE, receiveBuf, receiveCounts, displacements, MPI_DOUBLE, MPIComm);
 }
 

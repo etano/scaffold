@@ -2,6 +2,7 @@
 #define IO_DATATYPE_H
 
 #include "H5Cpp.h"
+#include "../types.h"
 
 namespace IO {
 
@@ -28,7 +29,7 @@ namespace IO {
         template<> \
         inline const int hdf5_type_traits<Type>::get_rank(Type& val) { return 0; }
   PRIMITIVE(char, H5::IntType, H5::PredType::NATIVE_CHAR);
-  PRIMITIVE(string, H5::StrType, H5::PredType::NATIVE_CHAR);
+  PRIMITIVE(std::string, H5::StrType, H5::PredType::NATIVE_CHAR);
   PRIMITIVE(short, H5::IntType, H5::PredType::NATIVE_SHORT);
   PRIMITIVE(int, H5::IntType, H5::PredType::NATIVE_INT);
   PRIMITIVE(long, H5::IntType, H5::PredType::NATIVE_LONG);
@@ -48,62 +49,123 @@ namespace IO {
 #endif
 #undef PRIMITIVE
 
-  // Specialization of hdf5_type_traits for armadillo types
-#define ARMATYPE(Type, ElemType, H5PredType, H5Type) \
-        template<> \
-        inline H5::PredType hdf5_type_traits<Type>::get_type(Type&) { return H5Type; } \
-        template<> \
-        inline size_t hdf5_type_traits<Type>::get_size(Type& val) { return val.size(); } \
-        template<> \
-        inline void* hdf5_type_traits<Type>::get_addr(Type& val) { return val.memptr(); } \
-        template<> \
-        inline const int hdf5_type_traits<Type>::get_dim(Type& val, int d) { if (d == 0) { return val.n_rows; } else { return val.n_cols; } } \
-        template<> \
-        inline const int hdf5_type_traits<Type>::get_rank(Type& val) { return 1; }
-  ARMATYPE(Ivector, int, H5::IntType, H5::PredType::NATIVE_INT);
-#if PRECISION==double
-  ARMATYPE(Tvector, RealType, H5::FloatType, H5::PredType::NATIVE_DOUBLE);
-#elif PRECISION==single
-  ARMATYPE(Tvector, RealType, H5::FloatType, H5::PredType::NATIVE_FLOAT);
+// Specialization of hdf5_type_traits for armadillo types
+#ifdef USE_ARMADILLO
+  #define ARMATYPE(Type, ElemType, H5PredType, H5Type) \
+          template<> \
+          inline H5::PredType hdf5_type_traits<Type>::get_type(Type&) { return H5Type; } \
+          template<> \
+          inline size_t hdf5_type_traits<Type>::get_size(Type& val) { return val.size(); } \
+          template<> \
+          inline void* hdf5_type_traits<Type>::get_addr(Type& val) { return val.memptr(); } \
+          template<> \
+          inline const int hdf5_type_traits<Type>::get_dim(Type& val, int d) { if (d == 0) { return val.n_rows; } else { return val.n_cols; } } \
+          template<> \
+          inline const int hdf5_type_traits<Type>::get_rank(Type& val) { return 1; }
+    ARMATYPE(vec<int>, int, H5::IntType, H5::PredType::NATIVE_INT);
+  #if PRECISION==double
+    ARMATYPE(vec<RealType>, RealType, H5::FloatType, H5::PredType::NATIVE_DOUBLE);
+  #elif PRECISION==single
+    ARMATYPE(vec<RealType>, RealType, H5::FloatType, H5::PredType::NATIVE_FLOAT);
+  #endif
+  #undef ARMATYPE
+  
+  #define ARMATYPE(Type, ElemType, H5PredType, H5Type) \
+          template<> \
+          inline H5::PredType hdf5_type_traits<Type>::get_type(Type&) { return H5Type; } \
+          template<> \
+          inline size_t hdf5_type_traits<Type>::get_size(Type& val) { return val.size(); } \
+          template<> \
+          inline void* hdf5_type_traits<Type>::get_addr(Type& val) { return val.memptr(); } \
+          template<> \
+          inline const int hdf5_type_traits<Type>::get_dim(Type& val, int d) { if (d == 0) { return val.n_cols; } else { return val.n_rows; } } \
+          template<> \
+          inline const int hdf5_type_traits<Type>::get_rank(Type& val) { return 2; }
+    ARMATYPE(mat<int>, int, H5::IntType, H5::PredType::NATIVE_INT);
+  #if PRECISION==double
+    ARMATYPE(mat<RealType>, RealType, H5::FloatType, H5::PredType::NATIVE_DOUBLE);
+  #elif PRECISION==single
+    ARMATYPE(mat<RealType>, RealType, H5::FloatType, H5::PredType::NATIVE_FLOAT);
+  #endif
+  #undef ARMATYPE
+  
+  #define ARMATYPE(Type, ElemType, H5PredType, H5Type) \
+          template<> \
+          inline H5::PredType hdf5_type_traits<Type>::get_type(Type&) { return H5Type; } \
+          template<> \
+          inline size_t hdf5_type_traits<Type>::get_size(Type& val) { return val.size(); } \
+          template<> \
+          inline void* hdf5_type_traits<Type>::get_addr(Type& val) { return val.memptr(); } \
+          template<> \
+          inline const int hdf5_type_traits<Type>::get_dim(Type& val, int d) { if (d == 0) { return val.n_slices; } else if (d == 1) { return val.n_cols; } else { return val.n_rows; } } \
+          template<> \
+          inline const int hdf5_type_traits<Type>::get_rank(Type& val) { return 3; }
+  #if PRECISION==double
+    ARMATYPE(cube<RealType>, RealType, H5::FloatType, H5::PredType::NATIVE_DOUBLE);
+  #elif PRECISION==single
+    ARMATYPE(cube<RealType>, RealType, H5::FloatType, H5::PredType::NATIVE_FLOAT);
+  #endif
+  #undef ARMATYPE
 #endif
-#undef ARMATYPE
 
-#define ARMATYPE(Type, ElemType, H5PredType, H5Type) \
-        template<> \
-        inline H5::PredType hdf5_type_traits<Type>::get_type(Type&) { return H5Type; } \
-        template<> \
-        inline size_t hdf5_type_traits<Type>::get_size(Type& val) { return val.size(); } \
-        template<> \
-        inline void* hdf5_type_traits<Type>::get_addr(Type& val) { return val.memptr(); } \
-        template<> \
-        inline const int hdf5_type_traits<Type>::get_dim(Type& val, int d) { if (d == 0) { return val.n_cols; } else { return val.n_rows; } } \
-        template<> \
-        inline const int hdf5_type_traits<Type>::get_rank(Type& val) { return 2; }
-  ARMATYPE(Imatrix, int, H5::IntType, H5::PredType::NATIVE_INT);
-#if PRECISION==double
-  ARMATYPE(Tmatrix, RealType, H5::FloatType, H5::PredType::NATIVE_DOUBLE);
-#elif PRECISION==single
-  ARMATYPE(Tmatrix, RealType, H5::FloatType, H5::PredType::NATIVE_FLOAT);
+// Specialization of hdf5_type_traits for armadillo types
+#ifdef USE_EIGEN
+  #define EIGENTYPE(Type, ElemType, H5PredType, H5Type) \
+          template<> \
+          inline H5::PredType hdf5_type_traits<Type>::get_type(Type&) { return H5Type; } \
+          template<> \
+          inline size_t hdf5_type_traits<Type>::get_size(Type& val) { return val.size(); } \
+          template<> \
+          inline void* hdf5_type_traits<Type>::get_addr(Type& val) { return val.data(); } \
+          template<> \
+          inline const int hdf5_type_traits<Type>::get_dim(Type& val, int d) { if (d == 0) { return val.rows(); } else { return val.cols(); } } \
+          template<> \
+          inline const int hdf5_type_traits<Type>::get_rank(Type& val) { return 1; }
+    EIGENTYPE(vec<int>, int, H5::IntType, H5::PredType::NATIVE_INT);
+  #if PRECISION==double
+    EIGENTYPE(vec<RealType>, RealType, H5::FloatType, H5::PredType::NATIVE_DOUBLE);
+  #elif PRECISION==single
+    EIGENTYPE(vec<RealType>, RealType, H5::FloatType, H5::PredType::NATIVE_FLOAT);
+  #endif
+  #undef EIGENTYPE
+  
+  #define EIGENTYPE(Type, ElemType, H5PredType, H5Type) \
+          template<> \
+          inline H5::PredType hdf5_type_traits<Type>::get_type(Type&) { return H5Type; } \
+          template<> \
+          inline size_t hdf5_type_traits<Type>::get_size(Type& val) { return val.size(); } \
+          template<> \
+          inline void* hdf5_type_traits<Type>::get_addr(Type& val) { return val.data(); } \
+          template<> \
+          inline const int hdf5_type_traits<Type>::get_dim(Type& val, int d) { if (d == 0) { return val.cols(); } else { return val.rows(); } } \
+          template<> \
+          inline const int hdf5_type_traits<Type>::get_rank(Type& val) { return 2; }
+    EIGENTYPE(mat<int>, int, H5::IntType, H5::PredType::NATIVE_INT);
+  #if PRECISION==double
+    EIGENTYPE(mat<RealType>, RealType, H5::FloatType, H5::PredType::NATIVE_DOUBLE);
+  #elif PRECISION==single
+    EIGENTYPE(mat<RealType>, RealType, H5::FloatType, H5::PredType::NATIVE_FLOAT);
+  #endif
+  #undef EIGENTYPE
+  
+  #define EIGENTYPE(Type, ElemType, H5PredType, H5Type) \
+          template<> \
+          inline H5::PredType hdf5_type_traits<Type>::get_type(Type&) { return H5Type; } \
+          template<> \
+          inline size_t hdf5_type_traits<Type>::get_size(Type& val) { return val.data.size(); } \
+          template<> \
+          inline void* hdf5_type_traits<Type>::get_addr(Type& val) { return val.data.data(); } \
+          template<> \
+          inline const int hdf5_type_traits<Type>::get_dim(Type& val, int d) { if (d == 0) { return val.n_rows; } else if (d == 1) { return val.n_cols; } else { return val.n_slices; } } \
+          template<> \
+          inline const int hdf5_type_traits<Type>::get_rank(Type& val) { return 3; }
+  #if PRECISION==double
+    EIGENTYPE(cube<RealType>, RealType, H5::FloatType, H5::PredType::NATIVE_DOUBLE);
+  #elif PRECISION==single
+    EIGENTYPE(cube<RealType>, RealType, H5::FloatType, H5::PredType::NATIVE_FLOAT);
+  #endif
+  #undef EIGENTYPE
 #endif
-#undef ARMATYPE
-
-#define ARMATYPE(Type, ElemType, H5PredType, H5Type) \
-        template<> \
-        inline H5::PredType hdf5_type_traits<Type>::get_type(Type&) { return H5Type; } \
-        template<> \
-        inline size_t hdf5_type_traits<Type>::get_size(Type& val) { return val.size(); } \
-        template<> \
-        inline void* hdf5_type_traits<Type>::get_addr(Type& val) { return val.memptr(); } \
-        template<> \
-        inline const int hdf5_type_traits<Type>::get_dim(Type& val, int d) { if (d == 0) { return val.n_slices; } else if (d == 1) { return val.n_cols; } else { return val.n_rows; } } \
-        template<> \
-        inline const int hdf5_type_traits<Type>::get_rank(Type& val) { return 3; }
-#if PRECISION==double
-  ARMATYPE(Tcube, RealType, H5::FloatType, H5::PredType::NATIVE_DOUBLE);
-#elif PRECISION==single
-  ARMATYPE(Tcube, RealType, H5::FloatType, H5::PredType::NATIVE_FLOAT);
-#endif
-#undef ARMATYPE
 
 }
 
