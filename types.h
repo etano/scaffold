@@ -18,7 +18,7 @@ typedef int IntType;
   #include "Matrix/armadillo.h"
 #endif
 #ifdef USE_EIGEN
-  #define EIGEN_MATRIXBASE_PLUGIN "/Users/ethan/src/HPCTemplate/src/Utils/Matrix/eigen_matrix_additions.h"
+  #define EIGEN_MATRIXBASE_PLUGIN "/Users/ethan/src/simpimc/src/Utils/Matrix/eigen_matrix_additions.h"
   #include "Matrix/eigen.h"
 #endif
 

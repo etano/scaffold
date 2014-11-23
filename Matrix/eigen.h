@@ -13,7 +13,7 @@ class cube {
       : n_slices(_n_slices), n_rows(_n_rows), n_cols(_n_cols),data(_n_rows,_n_slices*_n_cols)
     {}
 
-    T operator()(const int i, const int j, const int k)
+    T& operator()(const int i, const int j, const int k)
     {
       return data(i,k*n_cols + j);
     }
@@ -24,11 +24,77 @@ class cube {
       return out;
     }
 
+    size_t size() { return n_slices*n_rows*n_cols; }
+
     mat<T> data;
     int n_slices, n_rows, n_cols;
 };
 
-template<class T> using field = std::vector<T>;
+template<class T>
+class field {
+  
+  public:
+    field () {}
+
+    field (int _n_rows)
+      : n_rows(_n_rows), n_cols(1), data_1d(_n_rows), dim(1)
+    {}
+
+    field (int _n_rows, int _n_cols)
+      : n_rows(_n_rows), n_cols(_n_cols), data_2d(_n_rows), dim(2)
+    {
+      for (int i=0; i<n_rows; ++i)
+        data_2d[i].resize(n_cols);
+    }
+
+    T& operator()(const int i)
+    {
+      return data_1d[i];
+    }
+
+    T& operator()(const int i, const int j)
+    {
+      return data_2d[i][j];
+    }
+
+    void set_size(const int _n_rows)
+    {
+      dim = 1;
+      n_rows = _n_rows;
+      data_1d.resize(n_rows);
+    }
+
+    void set_size(const int _n_rows, const int _n_cols)
+    {
+      dim = 2;
+      n_rows = _n_rows;
+      n_cols = _n_cols;
+      data_2d.resize(n_rows);
+      for (int i=0; i<n_rows; ++i)
+        data_2d[i].resize(n_cols);
+    }
+
+    size_t size() { return n_rows*n_cols; }
+
+    friend std::ostream& operator<<(std::ostream& out, field<T> &val)
+    {
+      for (int i=0; i<val.n_rows; ++i) {
+        if (val.dim>1) {
+          for (int j=0; j<val.n_cols; ++j) {
+            out << val(i,j);
+          }
+        } else {
+          out << val(i);
+        }
+      }
+      return out;
+    }
+
+    std::vector<T> data_1d;
+    std::vector< std::vector<T> > data_2d;
+    int n_rows, n_cols, dim;
+
+};
 
 // Initialization
 template<class T>
@@ -66,7 +132,7 @@ template<class T>
 auto mag(T&& val) -> decltype(std::forward<T>(val).norm()) { return std::forward<T>(val).norm(); }
 
 template<class T>
-auto dot(T&& val1, T&& val2) -> decltype(std::forward(val1).dot(std::forward(val2))) { return std::forward(val1).dot(std::forward(val2)); }
+auto dot(T& val1, T& val2) -> decltype(val1.dot(val2)) { return val1.dot(val2); }
 
 template<class T>
 inline T solve(T &val1, T &val2) { return val1.fullPivLu().solve(val2); }
