@@ -271,8 +271,7 @@ public:
 #ifdef USE_ARMADILLO
     int rows = fromBuff.n_rows;
     int cols = fromBuff.n_cols;
-#endif
-#ifdef USE_EIGEN
+#elif defined USE_EIGEN
     int rows = fromBuff.rows();
     int cols = fromBuff.cols();
 #endif
@@ -324,8 +323,7 @@ public:
 #ifdef USE_ARMADILLO
     int rows = fromBuff.n_rows;
     int cols = fromBuff.n_cols;
-#endif
-#ifdef USE_EIGEN
+#elif defined USE_EIGEN
     int rows = fromBuff.rows();
     int cols = fromBuff.cols();
 #endif
