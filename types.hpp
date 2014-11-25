@@ -1,7 +1,10 @@
-#ifndef TYPES_H
-#define TYPES_H
+#ifndef SCAFFOLD_TYPES
+#define SCAFFOLD_TYPES
 
 #include <complex>
+
+namespace scaffold {
+
 #if PRECISION==double
   typedef double RealType;
   typedef std::complex<double> ComplexType;
@@ -11,12 +14,7 @@
 #endif
 typedef int IntType;
 
-#ifdef USE_EIGEN
-  #define EIGEN_MATRIXBASE_PLUGIN "/Users/ethan/src/simpimc/src/Utils/Matrix/eigen_matrix_additions.h"
-  #include "Matrix/eigen.h"
-#else
-  #include "Matrix/armadillo.h"
-#endif
+} // namespace
 
 
 #endif

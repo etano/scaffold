@@ -19,11 +19,7 @@ ELSEIF(${SCAFFOLD_MATRIX_LIBRARY} STREQUAL "EIGEN")
 ENDIF()
 
 # Set scaffold SRCS
-SET (SRCS ${SRCS}
-  ${SCAFFOLD_DIR}/Communication/Communication.cpp
-  ${SCAFFOLD_DIR}/IO/InputClass.cpp
-  ${SCAFFOLD_DIR}/IO/xmlParser.cpp
-  ${SCAFFOLD_DIR}/RNG/RNGClass.cpp)
+SET (SCAFFOLD_SRCS ${SCAFFOLD_DIR}/IO/xmlParser.cpp)
 
 # Set scaffold libraries
-SET (LIBS ${LIBS} ${LA_LIBS} ${HDF5_LIBS} ${ARMADILLO_LIBS})
+SET (SCAFFOLD_LIBS ${LA_LIBS} ${HDF5_LIBS} ${ARMADILLO_LIBS})

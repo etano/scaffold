@@ -9,6 +9,8 @@
 
 #include <armadillo>
 
+namespace scaffold {
+
 // Basic types
 template<class T> using vec = arma::Col<T>;
 template<class T> using mat = arma::Mat<T>;
@@ -61,5 +63,7 @@ auto dot(T&& val1, T&& val2) -> decltype(arma::dot(std::forward(val1),std::forwa
 
 template<class T>
 auto solve(T&& val1, T&& val2) -> decltype(arma::solve(std::forward(val1),std::forward(val2))) { return arma::solve(std::forward(val1),std::forward(val2)); }
+
+} // namespace
 
 #endif
