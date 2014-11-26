@@ -21,5 +21,8 @@ ENDIF()
 # Set scaffold SRCS
 SET (SCAFFOLD_SRCS ${SCAFFOLD_DIR}/IO/xmlParser.cpp)
 
+# Include scaffold directory
+INCLUDE_DIRECTORIES(${SCAFFOLD_DIR})
+
 # Set scaffold libraries
 SET (SCAFFOLD_LIBS ${LA_LIBS} ${HDF5_LIBS} ${ARMADILLO_LIBS})
