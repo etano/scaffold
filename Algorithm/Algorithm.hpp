@@ -4,9 +4,8 @@
 #include <vector>
 #include <algorithm>
 #include <map>
-#include "../types.hpp"
 
-namespace scaffold { namespace ALG {
+namespace scaffold { namespace algorithm {
 
   inline int factorial(const int x)
   {
@@ -21,12 +20,10 @@ namespace scaffold { namespace ALG {
     return n_factorial_over_n_minus_k_factorial/factorial(k);
   }
   
-  inline bool fequal(RealType a, RealType b, RealType tol)
+  template <typename T>
+  inline bool fequal(T a, T b, T tol)
   {
-    if (abs(a-b) < tol)
-      return true;
-    else
-      return false;
+    return (fabs(a-b) < tol);
   }
   
   template <typename Iterator>

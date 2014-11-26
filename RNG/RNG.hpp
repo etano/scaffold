@@ -1,12 +1,11 @@
-#ifndef RNG_H
-#define RNG_H
+#ifndef SCAFFOLD_RNG
+#define SCAFFOLD_RNG
 
 #include <iostream>
 #include <random>
-#include "../types.hpp"
 #include "../Matrix/Matrix.hpp"
 
-namespace scaffold { namespace RNG {
+namespace scaffold { namespace rand {
 
 class RNG
 {
@@ -21,49 +20,64 @@ public:
     std::cout << "RNG seed: " << seed << "\n";
   }
 
-  std::uniform_real_distribution<RealType> u_dist;
-  std::uniform_int_distribution<IntType> uint_dist;
-  std::normal_distribution<RealType> normal_dist;
+  std::uniform_real_distribution<double> u_dist;
+  std::normal_distribution<double> normal_dist;
 
   // Random Functions
 
   // Generate a random number between 0 and 1
   // return a uniform number in [0,1].
-  inline RealType unifRand() { return u_dist(rng); }
-  
+  inline double unifRand() { return u_dist(rng); }
+
   // Generate a random number in a real interval.
   // param a one end point of the interval
   // param b the other end of the interval
   // return a inform rand numberin [a,b].
-  inline RealType unifRand(const RealType a, const RealType b) { return (b-a)*unifRand() + a; }
-  
+  template <typename T>
+  inline double unifRand(const T a, const T b) { return (b-a)*unifRand() + a; }
+
   // Generate a random integer between 1 and a given value.
   // param n the largest value return a uniform random value in [1,...,n]
-  inline long unifRand (const long n) { return floor(unifRand()*n+1.); }
-  
+  inline int unifRand (const int n) { return floor(unifRand()*n+1.); }
+
   // Generate a uniform random vector of length 1
-  inline void unifRand(vec<RealType>& r)
+  template <typename T>
+  inline void unifRand(matrix::vec<T>& r)
   {
     for (unsigned int iD=0; iD<r.size(); iD++)
       r(iD) = unifRand(-1,1);
-    r /= mag(r);
+    r /= matrix::mag(r);
   }
-  
+
   // Generate a uniform random vector of length l
-  inline void unifRand(vec<RealType>& r, const RealType l)
+  template <typename T>
+  inline void unifRand(matrix::vec<T>& r, const T l)
   {
     unifRand(r);
     r *= l;
   }
-  
+
   // Generate a normal distribution random number
-  inline RealType normRand(const RealType m, const RealType s) { return normal_dist(rng)*s + m; }
-  
+  inline double normRand() { return normal_dist(rng); }
+
+  // Generate a normal distribution random number of mean m and variance s
+  template <typename T>
+  inline double normRand(const T m, const T s) { return normal_dist(rng)*s + m; }
+
+  // Generate a normal random vector of mean m and variance s
+  template <typename T>
+  inline void normRand(matrix::vec<T>& r, const T m, const T s)
+  {
+    normRand(r);
+    r = r*s + m;
+  }
+
   // Generate a normal random vector of length 1
-  inline void normRand(vec<RealType>& r, const RealType m, const RealType s)
+  template <typename T>
+  inline void normRand(matrix::vec<T>& r)
   {
     for (unsigned int iD=0; iD<r.size(); iD++)
-      r(iD) = normRand(m,s);
+      r(iD) = normRand();
   }
 
 };

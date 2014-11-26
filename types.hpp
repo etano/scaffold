@@ -3,7 +3,11 @@
 
 #include <complex>
 
-namespace scaffold {
+namespace scaffold { namespace types {
+
+#ifndef PRECISION
+#define PRECISION double
+#endif
 
 #if PRECISION==double
   typedef double RealType;
@@ -14,7 +18,7 @@ namespace scaffold {
 #endif
 typedef int IntType;
 
-} // namespace
+}} // namespace
 
 
 #endif

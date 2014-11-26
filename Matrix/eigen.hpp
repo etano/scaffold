@@ -4,7 +4,7 @@
 #define EIGEN_NO_DEBUG
 #include <eigen3/Eigen/Eigen>
 
-namespace scaffold {
+namespace scaffold { namespace matrix {
 
 // Basic types
 template<class T> using vec = Eigen::Matrix<T, Eigen::Dynamic, 1>;
@@ -140,6 +140,6 @@ auto dot(T& val1, T& val2) -> decltype(val1.dot(val2)) { return val1.dot(val2); 
 template<class T>
 inline T solve(T &val1, T &val2) { return val1.fullPivLu().solve(val2); }
 
-} // namespace
+}} // namespace
 
 #endif
