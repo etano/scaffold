@@ -24,23 +24,6 @@ public:
     delete file;
   }
 
-  /// Gets for HDF5 traits
-  // Get type
-  template <class T>
-  inline H5::AtomType GetHDF5Datatype(T &val) { return hdf5_type_traits<T>::get_type(val); }
-  // Get address of first element
-  template <class T>
-  inline void* GetHDF5Addr(T &val) { return hdf5_type_traits<T>::get_addr(val); }
-  // Get size of whole object
-  template <class T>
-  inline size_t GetHDF5Size(T &val) { return hdf5_type_traits<T>::get_size(val); }
-  // Get size of given dimension d
-  template <class T>
-  inline const int GetHDF5Dim(T &val, int d) { return hdf5_type_traits<T>::get_dim(val,d); }
-  // Get rank of object
-  template <class T>
-  inline const int GetHDF5Rank(T &val) { return hdf5_type_traits<T>::get_rank(val); }
-
   // Read
   template<class T>
   inline void Read(const std::string& dataset_name, T& data)
@@ -51,11 +34,8 @@ public:
     // Do read
     H5::DataSet* dataset = new H5::DataSet(file->openDataSet(dataset_name));
     H5::DataSpace dataspace = dataset->getSpace();
-    H5::AtomType datatype = GetHDF5Datatype(data);
-
-    //try {
-      dataset->read(GetHDF5Addr(data), datatype, dataspace, dataspace);
-    //}
+    H5::AtomType datatype = hdf5_type_traits<T>::get_type(data);
+    dataset->read(hdf5_type_traits<T>::get_addr(data), datatype, dataspace, dataspace);
 
     // Delete pointers
     delete dataset;
@@ -70,14 +50,15 @@ public:
     H5::H5File* file = new H5::H5File(fileName, H5F_ACC_RDWR);
 
     // Do write
-    H5::AtomType datatype(GetHDF5Datatype(data));
+    H5::AtomType datatype(hdf5_type_traits<T>::get_type(data));
     datatype.setOrder(H5T_ORDER_LE);
-    hsize_t data_shape[GetHDF5Rank(data)];
-    for (int i=0; i<GetHDF5Rank(data); ++i)
-      data_shape[i] = GetHDF5Dim(data,i);
-    H5::DataSpace dataspace(GetHDF5Rank(data), data_shape);
+    int data_rank = hdf5_type_traits<T>::get_rank(data);
+    hsize_t data_shape[data_rank];
+    for (int i=0; i<data_rank; ++i)
+      data_shape[i] = hdf5_type_traits<T>::get_dim(data,i);
+    H5::DataSpace dataspace(data_rank, data_shape);
     H5::DataSet* dataset = new H5::DataSet(file->createDataSet(dataset_name, datatype, dataspace));
-    dataset->write(GetHDF5Addr(data), datatype);
+    dataset->write(hdf5_type_traits<T>::get_addr(data), datatype);
 
     // Delete pointers
     delete dataset;
@@ -92,14 +73,15 @@ public:
     H5::H5File* file = new H5::H5File(fileName, H5F_ACC_RDWR);
 
     // Do write
-    H5::AtomType datatype(GetHDF5Datatype(data));
+    H5::AtomType datatype(hdf5_type_traits<T>::get_type(data));
     datatype.setOrder(H5T_ORDER_LE);
-    hsize_t data_shape[GetHDF5Rank(data)];
-    for (int i=0; i<GetHDF5Rank(data); ++i)
-      data_shape[i] = GetHDF5Dim(data,i);
-    H5::DataSpace dataspace(GetHDF5Rank(data), data_shape);
+    int data_rank = hdf5_type_traits<T>::get_rank(data);
+    hsize_t data_shape[data_rank];
+    for (int i=0; i<data_rank; ++i)
+      data_shape[i] = hdf5_type_traits<T>::get_dim(data,i);
+    H5::DataSpace dataspace(data_rank, data_shape);
     H5::DataSet* dataset = new H5::DataSet(file->openDataSet(dataset_name));
-    dataset->write(GetHDF5Addr(data), datatype);
+    dataset->write(hdf5_type_traits<T>::get_addr(data), datatype);
 
     // Delete pointers
     delete dataset;
@@ -127,11 +109,11 @@ public:
     H5::H5File* file = new H5::H5File(fileName, H5F_ACC_RDWR);
 
     // Get data information
-    int data_rank = GetHDF5Rank(data);
-    hsize_t data_shape[GetHDF5Rank(data)];
-    for (int i=0; i<GetHDF5Rank(data); ++i)
-      data_shape[i] = GetHDF5Dim(data,i);
-    H5::AtomType datatype = GetHDF5Datatype(data);
+    int data_rank = hdf5_type_traits<T>::get_rank(data);
+    hsize_t data_shape[data_rank];
+    for (int i=0; i<data_rank; ++i)
+      data_shape[i] = hdf5_type_traits<T>::get_dim(data,i);
+    H5::AtomType datatype = hdf5_type_traits<T>::get_type(data);
 
     // Create the data space with one unlimited dimension.
     int rank = data_rank + 1;
@@ -169,7 +151,7 @@ public:
     fspace.selectHyperslab(H5S_SELECT_SET, dims, offset);
 
     // Write original data into hyperslab
-    dataset->write(GetHDF5Addr(data), datatype, mspace, fspace);
+    dataset->write(hdf5_type_traits<T>::get_addr(data), datatype, mspace, fspace);
 
     // Delete pointers
     delete dataset;
@@ -184,11 +166,11 @@ public:
     H5::H5File* file = new H5::H5File(fileName, H5F_ACC_RDWR);
 
     // Get data information
-    int data_rank = GetHDF5Rank(data);
-    hsize_t data_shape[GetHDF5Rank(data)];
-    for (int i=0; i<GetHDF5Rank(data); ++i)
-      data_shape[i] = GetHDF5Dim(data,i);
-    H5::AtomType datatype = GetHDF5Datatype(data);
+    int data_rank = hdf5_type_traits<T>::get_rank(data);
+    hsize_t data_shape[data_rank];
+    for (int i=0; i<data_rank; ++i)
+      data_shape[i] = hdf5_type_traits<T>::get_dim(data,i);
+    H5::AtomType datatype = hdf5_type_traits<T>::get_type(data);
 
     // Open data set
     std::string full_name = prefix + dataset_name;
@@ -222,7 +204,7 @@ public:
     H5::DataSpace mspace(rank, dims_orig);
 
     // Write the data to the hyperslab.
-    dataset->write(GetHDF5Addr(data), datatype, mspace, fspace);
+    dataset->write(hdf5_type_traits<T>::get_addr(data), datatype, mspace, fspace);
 
     // Delete pointers
     delete dataset;
