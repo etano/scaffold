@@ -16,9 +16,7 @@ public:
   // Constructor
   RNG(int seed)
    : rng(seed), u_dist(0.,1.)
-  {
-    std::cout << "RNG seed: " << seed << "\n";
-  }
+  {}
 
   std::uniform_real_distribution<double> u_dist;
   std::normal_distribution<double> normal_dist;

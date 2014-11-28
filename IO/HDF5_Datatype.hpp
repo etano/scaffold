@@ -97,7 +97,7 @@ struct hdf5_type_traits {
   #undef ARMATYPE
 #endif
 
-// Specialization of hdf5_type_traits for armadillo types
+// Specialization of hdf5_type_traits for eigen types
 #ifdef USE_EIGEN
   #define EIGENTYPE(Type, ElemType, H5PredType, H5Type) \
           template<> \
