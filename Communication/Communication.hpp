@@ -7,7 +7,7 @@
 #if USE_OPENMP
   #include <omp.h>
 #endif
-#include "../Matrix/Matrix.hpp"
+#include "MPI_Datatype.hpp"
 
 namespace scaffold { namespace parallel {
 
@@ -30,84 +30,6 @@ namespace COMM {
       MPI_Comm_rank(MPI_COMM_WORLD, &proc);
       return (proc);
     }
-
-    // Template to retrieve traits of any MPI object
-    template <class T>
-    struct mpi_type_traits {
-      static inline MPI_Datatype get_type(T& val);
-      static inline size_t get_size(T& val);
-      static inline void* get_addr(T& val);
-    };
-
-    // Specialization of mpi_type_traits for primitive types
-    #define PRIMITIVE(Type, MpiType) \
-            template<> \
-            inline MPI_Datatype mpi_type_traits<Type>::get_type(Type&) { return MpiType; } \
-            template<> \
-            inline size_t mpi_type_traits<Type>::get_size(Type&) { return 1; } \
-            template<> \
-            inline void* mpi_type_traits<Type>::get_addr(Type& val) { return &val; }
-      PRIMITIVE(char, MPI::CHAR);
-      PRIMITIVE(wchar_t, MPI::WCHAR);
-      PRIMITIVE(short, MPI::SHORT);
-      PRIMITIVE(int, MPI::INT);
-      PRIMITIVE(long, MPI::LONG);
-      PRIMITIVE(signed char, MPI::SIGNED_CHAR);
-      PRIMITIVE(unsigned char, MPI::UNSIGNED_CHAR);
-      PRIMITIVE(unsigned short, MPI::UNSIGNED_SHORT);
-      PRIMITIVE(unsigned int, MPI::UNSIGNED);
-      PRIMITIVE(unsigned long, MPI::UNSIGNED_LONG);
-      PRIMITIVE(unsigned long long, MPI::UNSIGNED_LONG_LONG);
-      PRIMITIVE(bool, MPI::BOOL);
-      PRIMITIVE(float, MPI::FLOAT);
-      PRIMITIVE(double, MPI::DOUBLE);
-      PRIMITIVE(std::complex<float>, MPI::COMPLEX);
-      PRIMITIVE(std::complex<double>, MPI::DOUBLE_COMPLEX);
-    #undef PRIMITIVE
-
-    // Specialization of mpi_type_traits for armadillo types
-    #ifdef USE_ARMADILLO
-      #define ARMATYPE(Type, ElemType, MpiType) \
-              template<> \
-              inline MPI_Datatype mpi_type_traits<Type>::get_type(Type&) { return MpiType; } \
-              template<> \
-              inline size_t mpi_type_traits<Type>::get_size(Type& val) { return val.size(); } \
-              template<> \
-              inline void* mpi_type_traits<Type>::get_addr(Type& val) { return val.memptr(); }
-        ARMATYPE(matrix::mat<int>, int, MPI::INT);
-        ARMATYPE(matrix::vec<int>, int, MPI::INT);
-        ARMATYPE(matrix::mat<double>, double, MPI::DOUBLE);
-        ARMATYPE(matrix::vec<double>, double, MPI::DOUBLE);
-        ARMATYPE(matrix::mat<std::complex<double> >, std::complex<double>, MPI::DOUBLE_COMPLEX);
-        ARMATYPE(matrix::vec<std::complex<double> >, std::complex<double>, MPI::DOUBLE_COMPLEX);
-        ARMATYPE(matrix::mat<float>, float, MPI::FLOAT);
-        ARMATYPE(matrix::vec<float>, float, MPI::FLOAT);
-        ARMATYPE(matrix::mat<std::complex<float> >, std::complex<float>, MPI::COMPLEX);
-        ARMATYPE(matrix::vec<std::complex<float> >, std::complex<float>, MPI::COMPLEX);
-      #undef ARMATYPE
-    #endif
-
-    // Specialization of mpi_type_traits for eigen types
-    #ifdef USE_EIGEN
-      #define EIGENTYPE(Type, ElemType, MpiType) \
-              template<> \
-              inline MPI_Datatype mpi_type_traits<Type>::get_type(Type&) { return MpiType; } \
-              template<> \
-              inline size_t mpi_type_traits<Type>::get_size(Type& val) { return val.size(); } \
-              template<> \
-              inline void* mpi_type_traits<Type>::get_addr(Type& val) { return val.data(); }
-        EIGENTYPE(matrix::mat<int>, int, MPI::INT);
-        EIGENTYPE(matrix::vec<int>, int, MPI::INT);
-        EIGENTYPE(matrix::mat<double>, double, MPI::DOUBLE);
-        EIGENTYPE(matrix::vec<double>, double, MPI::DOUBLE);
-        EIGENTYPE(matrix::mat<std::complex<double> >, std::complex<double>, MPI::DOUBLE_COMPLEX);
-        EIGENTYPE(matrix::vec<std::complex<double> >, std::complex<double>, MPI::DOUBLE_COMPLEX);
-        EIGENTYPE(matrix::mat<float>, float, MPI::FLOAT);
-        EIGENTYPE(matrix::vec<float>, float, MPI::FLOAT);
-        EIGENTYPE(matrix::mat<std::complex<float> >, std::complex<float>, MPI::COMPLEX);
-        EIGENTYPE(matrix::vec<std::complex<float> >, std::complex<float>, MPI::COMPLEX);
-      #undef EIGENTYPE
-    #endif
 
   #else // Serial version
     inline void Init (int argc, char **argv) {}
@@ -134,21 +56,21 @@ public:
   {
     MPIComm = MPI_COMM_WORLD;
   }
-  
+
   int MyProc()
   {
     int rank;
     MPI_Comm_rank(MPIComm, &rank);
     return rank;
   }
-  
+
   int NumProcs()
   {
     int nProcs;
     MPI_Comm_size(MPIComm, &nProcs);
     return nProcs;
   }
-  
+
   std::string MyHost()
   {
     int len;
@@ -156,12 +78,12 @@ public:
     MPI_Get_processor_name(hostname, &len);
     return hostname;
   }
-  
+
   void BarrierSync()
   {
     MPI_Barrier(MPIComm);
   }
-  
+
   void Split(int color, CommunicatorClass &newComm)
   {
     MPI_Comm_split(MPIComm, color, 0, &(newComm.MPIComm));
@@ -179,7 +101,7 @@ public:
   #endif
     MPI_Comm_create(MPIComm, newGroup, &(newComm.MPIComm));
   }
-  
+
   /** Gathers vectors from subprocesses and puts them in a matrix
    * @param toProc ID for receiving processor
    * @param fromBuff Reference to sending vector
@@ -223,104 +145,76 @@ public:
     return MPI_Allgatherv(sendBuf, sendCount, MPI_DOUBLE, receiveBuf, receiveCounts, displacements, MPI_DOUBLE, MPIComm);
   }
 
-  /// Gets for MPI traits
-  // Get type
-  template <class T>
-  inline MPI_Datatype GetMPIDatatype(T &val) { return COMM::mpi_type_traits<T>::get_type(val); }
-  // Get address of first element
-  template <class T>
-  inline void* GetMPIAddr(T &val) { return COMM::mpi_type_traits<T>::get_addr(val); }
-  // Get size of whole object
-  template <class T>
-  inline size_t GetMPISize(T &val) { return COMM::mpi_type_traits<T>::get_size(val); }
-
   // Send
   template<class T>
   inline int Send(int toProc, T &val)
   {
-    return MPI_Send(GetMPIAddr(val), GetMPISize(val), GetMPIDatatype(val), toProc, 0, MPIComm);
+    return MPI_Send(mpi_type_traits<T>::get_addr(val), mpi_type_traits<T>::get_size(val), mpi_type_traits<T>::get_type(val), toProc, 0, MPIComm);
   }
 
   // Receive
   template<class T>
   inline int Receive(int fromProc, T &val)
   {
-    return MPI_Recv(GetMPIAddr(val), GetMPISize(val), GetMPIDatatype(val), fromProc, 0, MPIComm, MPI_STATUS_IGNORE);
+    return MPI_Recv(mpi_type_traits<T>::get_addr(val), mpi_type_traits<T>::get_size(val), mpi_type_traits<T>::get_type(val), fromProc, 0, MPIComm, MPI_STATUS_IGNORE);
   }
 
   // Sendrecv
   template<class T>
   inline int SendReceive (int fromProc, T &fromBuff, int toProc, T &toBuff)
   {
-    return MPI_Sendrecv(GetMPIAddr(fromBuff), GetMPISize(fromBuff), GetMPIDatatype(fromBuff), fromProc, 1,
-                        GetMPIAddr(toBuff), GetMPISize(toBuff), GetMPIDatatype(toBuff), toProc, 1, MPIComm, MPI_STATUS_IGNORE);
+    return MPI_Sendrecv(mpi_type_traits<T>::get_addr(fromBuff), mpi_type_traits<T>::get_size(fromBuff), mpi_type_traits<T>::get_type(fromBuff), fromProc, 1, mpi_type_traits<T>::get_addr(toBuff), mpi_type_traits<T>::get_size(toBuff), mpi_type_traits<T>::get_type(toBuff), toProc, 1, MPIComm, MPI_STATUS_IGNORE);
   }
 
   // Broadcast
   template<class T>
   inline int Broadcast(int fromProc, T &val)
   {
-    return MPI_Bcast(GetMPIAddr(val), GetMPISize(val), GetMPIDatatype(val), fromProc, MPIComm);
+    return MPI_Bcast(mpi_type_traits<T>::get_addr(val), mpi_type_traits<T>::get_size(val), mpi_type_traits<T>::get_type(val), fromProc, MPIComm);
   }
 
   // Reduce
   template<class T>
   inline int Reduce(int toProc, T &fromBuff, T &toBuff, MPI_Op Op)
   {
-    return MPI_Reduce(GetMPIAddr(fromBuff), GetMPIAddr(toBuff), GetMPISize(fromBuff), GetMPIDatatype(fromBuff),
-                      Op, toProc, MPIComm);
+    return MPI_Reduce(mpi_type_traits<T>::get_addr(fromBuff), mpi_type_traits<T>::get_addr(toBuff), mpi_type_traits<T>::get_size(fromBuff), mpi_type_traits<T>::get_type(fromBuff), Op, toProc, MPIComm);
   }
 
   // AllReduce
   template<class T>
   inline int AllReduce(T &fromBuff, T &toBuff, MPI_Op Op)
   {
-    return MPI_Allreduce(GetMPIAddr(fromBuff), GetMPIAddr(toBuff), GetMPISize(fromBuff), GetMPIDatatype(fromBuff),
-                      Op, MPIComm);
+    return MPI_Allreduce(mpi_type_traits<T>::get_addr(fromBuff), mpi_type_traits<T>::get_addr(toBuff), mpi_type_traits<T>::get_size(fromBuff), mpi_type_traits<T>::get_type(fromBuff), Op, MPIComm);
   }
 
   // Sum
   template<class T>
-  inline int Sum(int toProc, T &fromBuff, T &toBuff)
-  {
-    return Reduce(toProc,fromBuff,toBuff,MPI_SUM);
-  }
+  inline int Sum(int toProc, T &fromBuff, T &toBuff) { return Reduce(toProc,fromBuff,toBuff,MPI_SUM); }
 
   // AllSum
   template<class T>
-  inline int AllSum(T &fromBuff, T &toBuff)
-  {
-    return AllReduce(fromBuff,toBuff,MPI_SUM);
-  }
+  inline int AllSum(T &fromBuff, T &toBuff) { return AllReduce(fromBuff,toBuff,MPI_SUM); }
 
   // Product
   template<class T>
-  inline int Product(int toProc, T &fromBuff, T &toBuff)
-  {
-    return Reduce(toProc,fromBuff,toBuff,MPI_PROD);
-  }
+  inline int Product(int toProc, T &fromBuff, T &toBuff) { return Reduce(toProc,fromBuff,toBuff,MPI_PROD); }
 
   // AllProduct
   template<class T>
-  inline int AllProduct(T &fromBuff, T &toBuff)
-  {
-    return AllReduce(fromBuff,toBuff,MPI_PROD);
-  }
+  inline int AllProduct(T &fromBuff, T &toBuff) { return AllReduce(fromBuff,toBuff,MPI_PROD); }
 
   // Gather
   template<class T>
   inline int Gather(int toProc, T &fromBuff, T &toBuff)
   {
-    return MPI_Gather(GetMPIAddr(fromBuff), GetMPISize(fromBuff), GetMPIDatatype(fromBuff),
-                      GetMPIAddr(toBuff), GetMPISize(fromBuff), GetMPIDatatype(toBuff), toProc, MPIComm);
+    return MPI_Gather(mpi_type_traits<T>::get_addr(fromBuff), mpi_type_traits<T>::get_size(fromBuff), mpi_type_traits<T>::get_type(fromBuff), mpi_type_traits<T>::get_addr(toBuff), mpi_type_traits<T>::get_size(fromBuff), mpi_type_traits<T>::get_type(toBuff), toProc, MPIComm);
   }
 
   // Gatherv
   template<class T>
   inline int Gatherv(int toProc, T &fromBuff, T &toBuff, int* recvCounts, int* displacements)
   {
-     return MPI_Gatherv(GetMPIAddr(fromBuff), GetMPISize(fromBuff), GetMPIDatatype(fromBuff),
-                        GetMPIAddr(toBuff), recvCounts, displacements, GetMPIDatatype(toBuff), toProc, MPIComm);
+     return MPI_Gatherv(mpi_type_traits<T>::get_addr(fromBuff), mpi_type_traits<T>::get_size(fromBuff), mpi_type_traits<T>::get_type(fromBuff), mpi_type_traits<T>::get_addr(toBuff), recvCounts, displacements, mpi_type_traits<T>::get_type(toBuff), toProc, MPIComm);
   }
 
   // GatherCols
@@ -355,24 +249,21 @@ public:
   template<class T>
   inline int AllGather(T &fromBuff, T &toBuff)
   {
-    return MPI_Gather(GetMPIAddr(fromBuff), GetMPISize(fromBuff), GetMPIDatatype(fromBuff),
-                      GetMPIAddr(toBuff), GetMPISize(fromBuff), GetMPIDatatype(toBuff), MPIComm);
+    return MPI_Gather(mpi_type_traits<T>::get_addr(fromBuff), mpi_type_traits<T>::get_size(fromBuff), mpi_type_traits<T>::get_type(fromBuff), mpi_type_traits<T>::get_addr(toBuff), mpi_type_traits<T>::get_size(fromBuff), mpi_type_traits<T>::get_type(toBuff), MPIComm);
   }
 
   // Scatter
   template<class T>
   inline int Scatter(int fromProc, T &fromBuff, T &toBuff)
   {
-    return MPI_Scatter(GetMPIAddr(fromBuff), GetMPISize(fromBuff), GetMPIDatatype(fromBuff),
-                       GetMPIAddr(toBuff), GetMPISize(toBuff), GetMPIDatatype(toBuff), fromProc, MPIComm);
+    return MPI_Scatter(mpi_type_traits<T>::get_addr(fromBuff), mpi_type_traits<T>::get_size(fromBuff), mpi_type_traits<T>::get_type(fromBuff), mpi_type_traits<T>::get_addr(toBuff), mpi_type_traits<T>::get_size(toBuff), mpi_type_traits<T>::get_type(toBuff), fromProc, MPIComm);
   }
 
   // Scatter
   template<class T>
   inline int Scatterv(int fromProc, T &fromBuff, T &toBuff, int* sendCounts, int* displacements)
   {
-     return MPI_Scatterv(GetMPIAddr(fromBuff), sendCounts, displacements, GetMPIDatatype(fromBuff),
-                         GetMPIAddr(toBuff), GetMPISize(toBuff), GetMPIDatatype(toBuff), fromProc, MPIComm);
+     return MPI_Scatterv(mpi_type_traits<T>::get_addr(fromBuff), sendCounts, displacements, mpi_type_traits<T>::get_type(fromBuff), mpi_type_traits<T>::get_addr(toBuff), mpi_type_traits<T>::get_size(toBuff), mpi_type_traits<T>::get_type(toBuff), fromProc, MPIComm);
   }
 
   // ScatterCols
