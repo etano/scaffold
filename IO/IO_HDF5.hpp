@@ -223,8 +223,7 @@ inline void IOClass::Read(const std::string& dataset_name, std::string& data)
   H5::H5File* file = new H5::H5File(fileName, H5F_ACC_RDONLY);
 
   // Do read
-  const int MAX_NAME_LENGTH = 1024;
-  char t_data[MAX_NAME_LENGTH];
+  char t_data[data.size()];
   H5::DataSet* dataset = new H5::DataSet(file->openDataSet(dataset_name));
   H5::DataSpace dataspace = dataset->getSpace();
   H5::DataType datatype = dataset->getDataType();
@@ -244,10 +243,9 @@ inline void IOClass::Write(const std::string& dataset_name, std::string& data)
   H5::H5File* file = new H5::H5File(fileName, H5F_ACC_RDWR);
 
   // Do write
-  const int MAX_NAME_LENGTH = 1024;
-  char t_data[MAX_NAME_LENGTH];
+  char t_data[data.size()];
   strcpy(t_data, data.c_str());
-  H5::StrType datatype(H5::PredType::C_S1, MAX_NAME_LENGTH);
+  H5::StrType datatype(H5::PredType::C_S1, data.size());
   int data_rank = 1;
   hsize_t data_shape[1];
   data_shape[0] = 1;
@@ -268,10 +266,9 @@ inline void IOClass::Rewrite(const std::string& dataset_name, std::string& data)
   H5::H5File* file = new H5::H5File(fileName, H5F_ACC_RDWR);
 
   // Do write
-  const int MAX_NAME_LENGTH = 1024;
-  char t_data[MAX_NAME_LENGTH];
+  char t_data[data.size()];
   strcpy(t_data, data.c_str());
-  H5::StrType datatype(H5::PredType::C_S1, MAX_NAME_LENGTH);
+  H5::StrType datatype(H5::PredType::C_S1, data.size());
   int data_rank = 1;
   hsize_t data_shape[1];
   data_shape[0] = 1;
