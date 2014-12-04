@@ -304,7 +304,7 @@ public:
   inline void Subset(matrix::vec<int> &ranks, CommunicatorClass &newComm)
   {
     if (ranks.size() != 1) {
-      cerr << "Serial verion of code does not support nontrivial subsets. Exiting.\n";
+      std::cerr << "Serial verion of code does not support nontrivial subsets. Exiting.\n";
       abort();
     }
   }
