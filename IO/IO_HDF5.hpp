@@ -10,12 +10,12 @@ class IOClass
 {
 public:
   std::string fileName;
-  inline void load(std::string& tmpFileName)
+  void load(std::string& tmpFileName)
   {
     fileName = tmpFileName;
   }
 
-  inline void create()
+  void create()
   {
     // Create file
     H5::H5File* file = new H5::H5File(fileName, H5F_ACC_TRUNC);
@@ -26,7 +26,7 @@ public:
 
   // Read
   template<class T>
-  inline void Read(const std::string& dataset_name, T& data)
+  void Read(const std::string& dataset_name, T& data)
   {
     // Open file
     H5::H5File* file = new H5::H5File(fileName, H5F_ACC_RDONLY);
@@ -44,7 +44,7 @@ public:
 
   // Write
   template<class T>
-  inline void Write(const std::string& dataset_name, T& data)
+  void Write(const std::string& dataset_name, T& data)
   {
     // Open file
     H5::H5File* file = new H5::H5File(fileName, H5F_ACC_RDWR);
@@ -67,7 +67,7 @@ public:
 
   // Rewrite
   template<class T>
-  inline void Rewrite(const std::string& dataset_name, T& data)
+  void Rewrite(const std::string& dataset_name, T& data)
   {
     // Open file
     H5::H5File* file = new H5::H5File(fileName, H5F_ACC_RDWR);
@@ -89,7 +89,7 @@ public:
   }
 
   // Create Group
-  inline void CreateGroup(const std::string& group_name)
+  void CreateGroup(const std::string& group_name)
   {
     // Open file
     H5::H5File* file = new H5::H5File(fileName, H5F_ACC_RDWR);
@@ -103,7 +103,7 @@ public:
 
   // Create extendable dataset
   template<class T>
-  inline void CreateExtendableDataSet(const std::string& prefix, const std::string& dataset_name, T& data)
+  void CreateExtendableDataSet(const std::string& prefix, const std::string& dataset_name, T& data)
   {
     // Open file
     H5::H5File* file = new H5::H5File(fileName, H5F_ACC_RDWR);
@@ -160,7 +160,7 @@ public:
 
   // Extend dataset
   template<class T>
-  inline void AppendDataSet(const std::string& prefix, const std::string& dataset_name, T& data)
+  void AppendDataSet(const std::string& prefix, const std::string& dataset_name, T& data)
   {
     // Open file
     H5::H5File* file = new H5::H5File(fileName, H5F_ACC_RDWR);
