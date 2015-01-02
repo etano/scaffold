@@ -3,7 +3,9 @@
 
 #include <string>
 #include <iostream>
-#include "xmlParser.h"
+#include <fstream>
+#include <vector>
+#include "rapidxml.hpp"
 
 namespace scaffold { namespace IO {
 
@@ -18,48 +20,41 @@ inline float convertConstChar(const char * val) { return atof(val); }
 template <>
 inline int convertConstChar(const char * val) { return atoi(val); }
 
-class Input
+struct Input
 {
-public:
+  std::vector<char> buffer;
+  rapidxml::xml_node<> * node;
+
+  Input() {};
+  Input(std::vector<char> t_buffer, rapidxml::xml_node<> *t_node)
+    : buffer(t_buffer), node(t_node)
+  {}
+
   // Loads settings structure from the specified XML file
   void load(const std::string &filename)
   {
-    xNode = XMLNode::openFileHelper(filename.c_str(), "Input");
+    std::ifstream ifFilename(filename);
+    std::vector<char> t_buffer((std::istreambuf_iterator<char>(ifFilename)), std::istreambuf_iterator<char>());
+    buffer = t_buffer;
+    buffer.push_back('\0');
+    rapidxml::xml_document<> doc;
+    doc.parse<0>(&buffer[0]);
+    node = doc.first_node("Input");
   }
 
-  XMLNode xNode;
-
-  inline std::string getName() { return std::string(xNode.getName()); }
-
-  inline Input getChild(std::string name)
-  {
-    Input in;
-    in.xNode = xNode.getChildNode(name.c_str());
-    return in;
-  }
-
-  inline std::string getString()
-  {
-    std::string xmlString = std::string(xNode.createXMLString(true));
-    return xmlString;
-  }
-
-  inline std::string getText(std::string name)
-  {
-    std::string str = std::string(getChild(name).getText());
-    return str;
-  }
+  inline std::string getString() { return getText(); }
+  inline std::string getText(std::string name) { return getChild(name).getText(); }
 
   inline std::string getText()
   {
-    std::string str = std::string(xNode.getText());
+    std::string str(buffer.begin(), buffer.end());
     return str;
   }
 
   template <class T>
   inline T getAttribute(std::string name)
   {
-    const char* i = xNode.getAttribute(name.c_str());
+    const char* i = node->first_attribute(name.c_str())->value();
     if (i == NULL) {
       std::cerr << "ERROR: " << name << " not found in input!" << std::endl;
       abort();
@@ -70,19 +65,23 @@ public:
   template <class T>
   inline T getAttribute(std::string name, T deflt)
   {
-    const char* i = xNode.getAttribute(name.c_str());
+    const char* i = node->first_attribute(name.c_str())->value();
     if (i == NULL)
       return deflt;
     else
       return convertConstChar<T>(i);
   }
 
+  inline Input getChild(std::string name)
+  {
+    Input in(buffer,node->first_node(name.c_str()));
+    return in;
+  }
+
   inline std::vector<Input> getChildList(std::string name) {
     std::vector<Input> ins;
-    int n = xNode.nChildNode(name.c_str());
-    for (int i=0; i<n; i++) {
-      Input in;
-      in.xNode = xNode.getChildNode(name.c_str(), i);
+    for (rapidxml::xml_node<> *child=node->first_node(name.c_str()); child; child=child->next_sibling()) {
+      Input in(buffer,child);
       ins.push_back(in);
     }
     return ins;
@@ -90,15 +89,12 @@ public:
 
   inline std::vector<Input> getChildList() {
     std::vector<Input> ins;
-    int n = xNode.nChildNode();
-    for (int i=0; i<n; i++) {
-      Input in;
-      in.xNode = xNode.getChildNode(i);
+    for (rapidxml::xml_node<> *child=node->first_node(); child; child=child->next_sibling()) {
+      Input in(buffer,child);
       ins.push_back(in);
     }
     return ins;
   }
-
 
 };
 
