@@ -3,12 +3,17 @@ scaffold
 
 Utilities for fast parallel communication and IO wrapped neatly in C++
 
-Requirements
-------------
+## Dependencies
 
-As of right now, scaffold relies on [armadillo](http://arma.sourceforge.net/), [hdf5](http://www.hdfgroup.org/HDF5/), and [libxml](http://xmlsoft.org/).
+* HDF5 (with c++ API) - http://www.hdfgroup.org/HDF5/
+* Armadillo c++ - http://arma.sourceforge.net/ OR Eigen http://eigen.tuxfamily.org/
 
-Usage
------
+These dependencies will automatically be installed by cmake. However, if you'd like to install them yourself, be sure to set the environmental variables:
 
-The easiest thing to do is to clone it into your current project as a subrepository.
+    export HDF5_HOME=/hdf5/install/directory
+    export ARMADILLO_HOME=/armadillo/install/directory
+    export EIGEN_HOME=/eigen/install/directory
+
+## Usage
+
+For an example usage and tests, please see the [HPCTemplate](https://github.com/etano/HPCTemplate) repository.
