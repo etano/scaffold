@@ -16,4 +16,4 @@ These dependencies will automatically be installed by cmake. However, if you'd l
 
 ## Usage
 
-For an example usage and tests, please see the [HPCTemplate](https://github.com/etano/HPCTemplate) repository.
+For example usage and tests, please see the [HPCTemplate](https://github.com/etano/HPCTemplate) repository.
