@@ -42,10 +42,9 @@ struct Input
     node = doc.first_node("Input");
   }
 
-  inline std::string getString() { return getText(); }
-  inline std::string getText(std::string name) { return getChild(name).getText(); }
+  inline std::string getName() { return std::string(node->name()); }
 
-  inline std::string getText()
+  inline std::string getString()
   {
     std::string str(buffer.begin(), buffer.end());
     return str;
