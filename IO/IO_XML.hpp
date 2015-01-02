@@ -53,28 +53,34 @@ struct Input
   template <class T>
   inline T getAttribute(std::string name)
   {
-    const char* i = node->first_attribute(name.c_str())->value();
-    if (i == NULL) {
-      std::cerr << "ERROR: " << name << " not found in input!" << std::endl;
+    rapidxml::xml_attribute<char> *att(node->first_attribute(name.c_str()));
+    if (att == 0) {
+      std::cerr << "ERROR: Attribute " << name << " not found in node " << getName() << "!" << std::endl;
       abort();
     } else
-      return convertConstChar<T>(i);
+      return convertConstChar<T>(att->value());
   }
 
   template <class T>
   inline T getAttribute(std::string name, T deflt)
   {
-    const char* i = node->first_attribute(name.c_str())->value();
-    if (i == NULL)
+    rapidxml::xml_attribute<char> *att(node->first_attribute(name.c_str()));
+    if (att == 0)
       return deflt;
     else
-      return convertConstChar<T>(i);
+      return convertConstChar<T>(att->value());
   }
 
   inline Input getChild(std::string name)
   {
-    Input in(buffer,node->first_node(name.c_str()));
-    return in;
+    rapidxml::xml_node<> *child = node->first_node(name.c_str());
+    if (child == 0) {
+      std::cerr << "ERROR: Child " << name << " not found in node " << getName() << "!" << std::endl;
+      abort();
+    } else {
+      Input in(buffer,child);
+      return in;
+    }
   }
 
   inline std::vector<Input> getChildList(std::string name) {
