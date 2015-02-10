@@ -8,7 +8,7 @@ IF(MATRIX_INCLUDE_DIR AND MATRIX_LIBS)
 ELSE()
     ExternalProject_Add(
       armadillo_project
-      URL http://sourceforge.net/projects/arma/files/armadillo-4.450.4.tar.gz
+      URL http://downloads.sourceforge.net/project/arma/armadillo-4.450.4.tar.gz
       SOURCE_DIR ${SCAFFOLD_DEPENDS_DIR}/armadillo
       CMAKE_COMMAND cmake . -DCMAKE_INSTALL_PREFIX=${SCAFFOLD_INSTALL_DIR}
     )
