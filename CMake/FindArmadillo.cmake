@@ -10,8 +10,8 @@ ELSE()
       armadillo_project
       URL http://downloads.sourceforge.net/project/arma/armadillo-4.450.4.tar.gz
       SOURCE_DIR ${SCAFFOLD_DEPENDS_DIR}/armadillo
-      CMAKE_COMMAND cmake . -DCMAKE_INSTALL_PREFIX=${SCAFFOLD_INSTALL_DIR}
+      CMAKE_COMMAND cmake . -DCMAKE_INSTALL_PREFIX=${SCAFFOLD_INSTALL_DIR} -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER} -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
     )
-    SET(MATRIX_LIBS armadillo)
+    SET(MATRIX_LIBS "")
     MESSAGE(STATUS "ARMADILLO_HOME not found. Installing in SCAFFOLD_DEPENDS_DIR.")
 ENDIF()

@@ -60,6 +60,7 @@ struct hdf5_type_traits {
           template<> \
           inline const int hdf5_type_traits<Type>::get_rank(Type& val) { return 1; }
     ARMATYPE(matrix::vec<int>, int, H5::IntType, H5::PredType::NATIVE_INT);
+    ARMATYPE(matrix::vec<unsigned int>, unsigned int, H5::IntType, H5::PredType::NATIVE_UINT);
     ARMATYPE(matrix::vec<float>, float, H5::FloatType, H5::PredType::NATIVE_FLOAT);
     ARMATYPE(matrix::vec<double>, double, H5::FloatType, H5::PredType::NATIVE_DOUBLE);
   #undef ARMATYPE
@@ -76,6 +77,7 @@ struct hdf5_type_traits {
           template<> \
           inline const int hdf5_type_traits<Type>::get_rank(Type& val) { return 2; }
     ARMATYPE(matrix::mat<int>, int, H5::IntType, H5::PredType::NATIVE_INT);
+    ARMATYPE(matrix::mat<unsigned int>, unsigned int, H5::IntType, H5::PredType::NATIVE_UINT);
     ARMATYPE(matrix::mat<float>, float, H5::FloatType, H5::PredType::NATIVE_FLOAT);
     ARMATYPE(matrix::mat<double>, double, H5::FloatType, H5::PredType::NATIVE_DOUBLE);
   #undef ARMATYPE
@@ -92,6 +94,7 @@ struct hdf5_type_traits {
           template<> \
           inline const int hdf5_type_traits<Type>::get_rank(Type& val) { return 3; }
     ARMATYPE(matrix::cube<int>, int, H5::IntType, H5::PredType::NATIVE_INT);
+    ARMATYPE(matrix::cube<unsigned int>, unsigned int, H5::IntType, H5::PredType::NATIVE_UINT);
     ARMATYPE(matrix::cube<float>, float, H5::FloatType, H5::PredType::NATIVE_FLOAT);
     ARMATYPE(matrix::cube<double>, double, H5::FloatType, H5::PredType::NATIVE_DOUBLE);
   #undef ARMATYPE
@@ -111,6 +114,7 @@ struct hdf5_type_traits {
           template<> \
           inline const int hdf5_type_traits<Type>::get_rank(Type& val) { return 1; }
     EIGENTYPE(matrix::vec<int>, int, H5::IntType, H5::PredType::NATIVE_INT);
+    EIGENTYPE(matrix::vec<unsigned int>, unsigned int, H5::IntType, H5::PredType::NATIVE_UINT);
     EIGENTYPE(matrix::vec<float>, float, H5::FloatType, H5::PredType::NATIVE_FLOAT);
     EIGENTYPE(matrix::vec<double>, double, H5::FloatType, H5::PredType::NATIVE_DOUBLE);
   #undef EIGENTYPE
@@ -127,6 +131,7 @@ struct hdf5_type_traits {
           template<> \
           inline const int hdf5_type_traits<Type>::get_rank(Type& val) { return 2; }
     EIGENTYPE(matrix::mat<int>, int, H5::IntType, H5::PredType::NATIVE_INT);
+    EIGENTYPE(matrix::mat<unsigned int>, unsigned int, H5::IntType, H5::PredType::NATIVE_UINT);
     EIGENTYPE(matrix::mat<float>, float, H5::FloatType, H5::PredType::NATIVE_FLOAT);
     EIGENTYPE(matrix::mat<double>, double, H5::FloatType, H5::PredType::NATIVE_DOUBLE);
   #undef EIGENTYPE
@@ -143,6 +148,7 @@ struct hdf5_type_traits {
           template<> \
           inline const int hdf5_type_traits<Type>::get_rank(Type& val) { return 3; }
     EIGENTYPE(matrix::cube<int>, int, H5::IntType, H5::PredType::NATIVE_INT);
+    EIGENTYPE(matrix::cube<unsigned int>, unsigned int, H5::IntType, H5::PredType::NATIVE_UINT);
     EIGENTYPE(matrix::cube<float>, float, H5::FloatType, H5::PredType::NATIVE_FLOAT);
     EIGENTYPE(matrix::cube<double>, double, H5::FloatType, H5::PredType::NATIVE_DOUBLE);
   #undef EIGENTYPE

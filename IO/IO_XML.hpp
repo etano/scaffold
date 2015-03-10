@@ -19,6 +19,8 @@ template <>
 inline float convertConstChar(const char * val) { return atof(val); }
 template <>
 inline int convertConstChar(const char * val) { return atoi(val); }
+template <>
+inline unsigned int convertConstChar(const char * val) { return atoi(val); }
 
 struct Node
 {

@@ -7,21 +7,21 @@
 
 namespace scaffold { namespace algorithm {
 
-  inline int factorial(const int x)
+  inline unsigned int factorial(const unsigned int x)
   {
     return (x == 1 ? x : x * factorial(x - 1));
   }
   
-  inline int n_choose_k(const int n, const int k)
+  inline unsigned int n_choose_k(const unsigned int n, const unsigned int k)
   {
-    int n_factorial_over_n_minus_k_factorial = 1;
-    for (int i=n; i>n-k; --i)
+    unsigned int n_factorial_over_n_minus_k_factorial = 1;
+    for (unsigned int i=n; i>n-k; --i)
       n_factorial_over_n_minus_k_factorial *= i;
     return n_factorial_over_n_minus_k_factorial/factorial(k);
   }
   
   template <typename T>
-  inline bool fequal(T a, T b, T tol)
+  inline bool fequal(const T a, const T b, const T tol)
   {
     return (fabs(a-b) < tol);
   }
@@ -76,19 +76,19 @@ namespace scaffold { namespace algorithm {
   }
   
   template <typename T>
-  void genCombPermK(std::vector< std::vector<T> >& vs, std::vector<T> vals, int k, bool duplicates=false, bool permutations=false)
+  void genCombPermK(std::vector< std::vector<T> >& vs, std::vector<T> vals, unsigned int k, bool duplicates=false, bool permutations=false)
   {
     if (duplicates) {
-      int n = vals.size();
-      for (int i=0; i<k-1; i++)
-        for (int j=0; j<n; j++)
+      unsigned int n = vals.size();
+      for (unsigned int i=0; i<k-1; i++)
+        for (unsigned int j=0; j<n; j++)
           vals.push_back(vals[j]);
     }
     std::sort(vals.begin(), vals.end());
   
     do {
       std::vector<T> v;
-      for (int i=0; i<k; ++i)
+      for (unsigned int i=0; i<k; ++i)
         v.push_back(vals[i]);
       std::sort(v.begin(), v.end());
       do {
