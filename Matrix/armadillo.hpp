@@ -6,7 +6,6 @@
 #define ARMA_USE_LAPACK
 #define ARMA_USE_BLAS
 #define ARMA_USE_CXX11
-#define ARMA_USE_MKL_ALLOC
 #define ARMA_MAT_PREALLOC 3
 
 #include <armadillo>
