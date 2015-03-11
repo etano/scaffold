@@ -1,5 +1,5 @@
-#ifndef SCAFFOLD_ALGORITHM
-#define SCAFFOLD_ALGORITHM
+#ifndef SCAFFOLD_ALGORITHM_H_
+#define SCAFFOLD_ALGORITHM_H_
 
 #include <vector>
 #include <algorithm>
@@ -11,7 +11,7 @@ namespace scaffold { namespace algorithm {
   {
     return (x == 1 ? x : x * factorial(x - 1));
   }
-  
+
   inline unsigned int n_choose_k(const unsigned int n, const unsigned int k)
   {
     unsigned int n_factorial_over_n_minus_k_factorial = 1;
@@ -19,13 +19,13 @@ namespace scaffold { namespace algorithm {
       n_factorial_over_n_minus_k_factorial *= i;
     return n_factorial_over_n_minus_k_factorial/factorial(k);
   }
-  
+
   template <typename T>
   inline bool fequal(const T a, const T b, const T tol)
   {
     return (fabs(a-b) < tol);
   }
-  
+
   template <typename Iterator>
   inline bool next_combination(const Iterator first, Iterator k, const Iterator last)
   {
@@ -64,19 +64,19 @@ namespace scaffold { namespace algorithm {
      std::rotate(first,k,last);
      return false;
   }
-  
+
   template <typename T>
-  void genPerm(std::vector< std::vector<T> >& vs, std::vector<T> vals)
+  void GenPerm(std::vector<std::vector<T>> &vs, std::vector<T> vals)
   {
     std::sort(vals.begin(), vals.end());
     do {
       vs.push_back(vals);
     } while(std::next_permutation(vals.begin(),vals.end()));
-  
+
   }
-  
+
   template <typename T>
-  void genCombPermK(std::vector< std::vector<T> >& vs, std::vector<T> vals, unsigned int k, bool duplicates=false, bool permutations=false)
+  void GenCombPermK(std::vector<std::vector<T>> &vs, std::vector<T> vals, unsigned int k, bool duplicates=false, bool permutations=false)
   {
     if (duplicates) {
       unsigned int n = vals.size();
@@ -85,7 +85,7 @@ namespace scaffold { namespace algorithm {
           vals.push_back(vals[j]);
     }
     std::sort(vals.begin(), vals.end());
-  
+
     do {
       std::vector<T> v;
       for (unsigned int i=0; i<k; ++i)

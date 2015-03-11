@@ -1,5 +1,5 @@
-#ifndef SCAFFOLD_MATRIX_EIGEN
-#define SCAFFOLD_MATRIX_EIGEN
+#ifndef SCAFFOLD_MATRIX_EIGEN_H_
+#define SCAFFOLD_MATRIX_EIGEN_H_
 
 #define EIGEN_NO_DEBUG
 #include <eigen3/Eigen/Eigen>
@@ -142,4 +142,4 @@ inline T solve(T &val1, T &val2) { return val1.fullPivLu().solve(val2); }
 
 }} // namespace
 
-#endif
+#endif // SCAFFOLD_MATRIX_EIGEN_H_
