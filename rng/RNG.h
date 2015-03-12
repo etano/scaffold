@@ -10,7 +10,7 @@ namespace scaffold { namespace rand {
 class RNG
 {
 private:
-  std::mt19937 rng;  // make instance of random number generator
+  std::mt19937 rng;  // Make instance of random number generator
 protected:
 public:
   // Constructor
