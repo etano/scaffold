@@ -14,6 +14,23 @@ These dependencies will automatically be installed by cmake. However, if you'd l
     export ARMADILLO_HOME=/armadillo/install/directory
     export EIGEN_HOME=/eigen/install/directory
 
-## Usage
+## Compiling
 
-For example usage and tests, please see the [HPCTemplate](https://github.com/etano/HPCTemplate) repository.
+Scaffold is a header-only library, though the simplest way to compile to use the supplied CMakeLists.txt.
+
+## Tests
+
+For an example build, look in the `tests` folder and do the following:
+
+    cd tests
+    mkdir build && cd build
+    cmake ..
+    make
+
+To run simpimc simply do the following:
+
+    ../bin/scaffold_test ../inputs/test.xml
+
+Or if you wish to run in parallel:
+
+    mpiexec -np 2 ../bin/scaffold_test ../inputs/test.xml
