@@ -1,7 +1,11 @@
 scaffold
 ========
 
-Utilities for fast parallel communication and IO wrapped neatly in C++
+Utilities for fast parallel communication and IO wrapped neatly in C++.
+
+master: ![master build status](https://travis-ci.org/etano/scaffold.svg?branch=master)
+
+dev: ![dev build status](https://travis-ci.org/etano/scaffold.svg?branch=dev)
 
 ## Dependencies
 
