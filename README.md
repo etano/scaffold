@@ -34,3 +34,14 @@ To run simpimc simply do the following:
 Or if you wish to run in parallel:
 
     mpiexec -np 2 ../bin/scaffold_test ../inputs/test.xml
+
+## Troubleshooting
+
+Note that occassionally (depending on your version of cmake), loading ExternalProjects fails the first time around. This is easily remedied by running
+
+    cmake ..
+    make
+
+a second time.
+
+If you have any other questions, feel free to contact me.
