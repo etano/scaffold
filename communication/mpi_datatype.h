@@ -1,5 +1,5 @@
-#ifndef SCAFFOLD_COMMUNICATION_MPIDATATYPE
-#define SCAFFOLD_COMMUNICATION_MPIDATATYPE
+#ifndef SCAFFOLD_COMMUNICATION_MPI_DATATYPE_H_
+#define SCAFFOLD_COMMUNICATION_MPI_DATATYPE_H_
 
 #if USE_MPI
   #include <mpi.h>
@@ -7,26 +7,26 @@
 #if USE_OPENMP
   #include <omp.h>
 #endif
-#include "../Matrix/Matrix.hpp"
+#include "../matrix/matrix.h"
 
 namespace scaffold { namespace parallel {
 
 // Template to retrieve traits of any MPI object
 template <class T>
-struct mpi_type_traits {
-  static inline MPI_Datatype get_type(T& val);
-  static inline size_t get_size(T& val);
-  static inline void* get_addr(T& val);
+struct MPITypeTraits {
+  static inline MPI_Datatype GetType(T& val);
+  static inline size_t GetSize(T& val);
+  static inline void* GetAddr(T& val);
 };
 
-// Specialization of mpi_type_traits for primitive types
+// Specialization of MPITypeTraits for primitive types
 #define PRIMITIVE(Type, MpiType) \
         template<> \
-        inline MPI_Datatype mpi_type_traits<Type>::get_type(Type&) { return MpiType; } \
+        inline MPI_Datatype MPITypeTraits<Type>::GetType(Type&) { return MpiType; } \
         template<> \
-        inline size_t mpi_type_traits<Type>::get_size(Type&) { return 1; } \
+        inline size_t MPITypeTraits<Type>::GetSize(Type&) { return 1; } \
         template<> \
-        inline void* mpi_type_traits<Type>::get_addr(Type& val) { return &val; }
+        inline void* MPITypeTraits<Type>::GetAddr(Type& val) { return &val; }
   PRIMITIVE(char, MPI::CHAR);
   PRIMITIVE(wchar_t, MPI::WCHAR);
   PRIMITIVE(short, MPI::SHORT);
@@ -45,15 +45,15 @@ struct mpi_type_traits {
   PRIMITIVE(std::complex<double>, MPI::DOUBLE_COMPLEX);
 #undef PRIMITIVE
 
-// Specialization of mpi_type_traits for armadillo types
+// Specialization of MPITypeTraits for armadillo types
 #ifdef USE_ARMADILLO
   #define ARMATYPE(Type, ElemType, MpiType) \
           template<> \
-          inline MPI_Datatype mpi_type_traits<Type>::get_type(Type&) { return MpiType; } \
+          inline MPI_Datatype MPITypeTraits<Type>::GetType(Type&) { return MpiType; } \
           template<> \
-          inline size_t mpi_type_traits<Type>::get_size(Type& val) { return val.size(); } \
+          inline size_t MPITypeTraits<Type>::GetSize(Type& val) { return val.size(); } \
           template<> \
-          inline void* mpi_type_traits<Type>::get_addr(Type& val) { return val.memptr(); }
+          inline void* MPITypeTraits<Type>::GetAddr(Type& val) { return val.memptr(); }
     ARMATYPE(matrix::mat<int>, int, MPI::INT);
     ARMATYPE(matrix::vec<int>, int, MPI::INT);
     ARMATYPE(matrix::mat<double>, double, MPI::DOUBLE);
@@ -67,15 +67,15 @@ struct mpi_type_traits {
   #undef ARMATYPE
 #endif
 
-// Specialization of mpi_type_traits for eigen types
+// Specialization of MPITypeTraits for eigen types
 #ifdef USE_EIGEN
   #define EIGENTYPE(Type, ElemType, MpiType) \
           template<> \
-          inline MPI_Datatype mpi_type_traits<Type>::get_type(Type&) { return MpiType; } \
+          inline MPI_Datatype MPITypeTraits<Type>::GetType(Type&) { return MpiType; } \
           template<> \
-          inline size_t mpi_type_traits<Type>::get_size(Type& val) { return val.size(); } \
+          inline size_t MPITypeTraits<Type>::GetSize(Type& val) { return val.size(); } \
           template<> \
-          inline void* mpi_type_traits<Type>::get_addr(Type& val) { return val.data(); }
+          inline void* MPITypeTraits<Type>::GetAddr(Type& val) { return val.data(); }
     EIGENTYPE(matrix::mat<int>, int, MPI::INT);
     EIGENTYPE(matrix::vec<int>, int, MPI::INT);
     EIGENTYPE(matrix::mat<double>, double, MPI::DOUBLE);
@@ -91,4 +91,4 @@ struct mpi_type_traits {
 
 }} // namespace
 
-#endif
+#endif // SCAFFOLD_COMMUNICATION_MPI_DATATYPE_H_

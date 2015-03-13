@@ -10,7 +10,7 @@ IF(HDF5_INCLUDE_DIR AND HDF5_LIBS)
 ELSE()
     ExternalProject_Add(
       hdf5_project
-      URL http://www.hdfgroup.org/ftp/HDF5/current/src/hdf5-1.8.13.tar.gz
+      URL http://www.hdfgroup.org/ftp/HDF5/releases/hdf5-1.8.13/src/hdf5-1.8.13.tar.gz
       SOURCE_DIR ${SCAFFOLD_DEPENDS_DIR}/hdf5
       CONFIGURE_COMMAND ${SCAFFOLD_DEPENDS_DIR}/hdf5/configure --prefix=${SCAFFOLD_INSTALL_DIR} --enable-cxx
       BUILD_COMMAND make

@@ -1,5 +1,5 @@
-#ifndef ARMADILLO_H
-#define ARMADILLO_H
+#ifndef SCAFFOLD_MATRIX_ARMADILLO_H_
+#define SCAFFOLD_MATRIX_ARMADILLO_H_
 
 #define ARMA_NO_DEBUG
 #define ARMA_DONT_USE_WRAPPER
@@ -67,4 +67,4 @@ auto solve(T&& val1, T&& val2) -> decltype(arma::solve(std::forward(val1),std::f
 
 }} // namespace
 
-#endif
+#endif // SCAFFOLD_MATRIX_ARMADILLO_H_
