@@ -14,3 +14,11 @@
 *.lai
 *.la
 *.a
+
+# Tests generated folders
+tests/bin
+tests/lib
+tests/include
+tests/depends
+tests/build
+tests/share
