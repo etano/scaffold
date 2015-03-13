@@ -10,7 +10,7 @@ dev: ![dev build status](https://travis-ci.org/etano/scaffold.svg?branch=dev)
 ## Dependencies
 
 * HDF5 (with c++ API) - http://www.hdfgroup.org/HDF5/
-* Armadillo c++ - http://arma.sourceforge.net/ OR Eigen http://eigen.tuxfamily.org/
+* Armadillo c++ - http://arma.sourceforge.net/ OR Eigen - http://eigen.tuxfamily.org/
 
 These dependencies will automatically be installed by cmake. However, if you'd like to install them yourself, be sure to set the environmental variables:
 
