@@ -48,14 +48,19 @@ struct Input
   // Loads settings structure from the specified XML file
   void Load(const std::string &filename)
   {
-    std::ifstream if_filename(filename);
-    std::vector<char> t_buffer((std::istreambuf_iterator<char>(if_filename)), std::istreambuf_iterator<char>());
-    buffer = t_buffer;
-    buffer.push_back('\0');
-    rapidxml::xml_document<> doc;
-    doc.parse<0>(&buffer[0]);
-    rapidxml::xml_node<> *rapidxml_node = doc.first_node("Input");
-    LoadXML(rapidxml_node, node);
+    std::ifstream if_file(filename);
+    if (if_file) {
+      std::vector<char> t_buffer((std::istreambuf_iterator<char>(if_file)), std::istreambuf_iterator<char>());
+      buffer = t_buffer;
+      buffer.push_back('\0');
+      rapidxml::xml_document<> doc;
+      doc.parse<0>(&buffer[0]);
+      rapidxml::xml_node<> *rapidxml_node = doc.first_node("Input");
+      LoadXML(rapidxml_node, node);
+    } else {
+      std::cerr << "ERROR: Can not find file " << filename << std::endl;
+      exit(1);
+    }
   }
 
   void LoadXML(rapidxml::xml_node<> *rapidxml_node, Node &my_node)
