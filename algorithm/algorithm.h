@@ -7,6 +7,28 @@
 
 namespace scaffold { namespace algorithm {
 
+  /// Compare the values of two vectors
+  template<class T>
+  struct CompareVec
+  {
+    bool operator() (const std::vector<T> &a, const std::vector<T> &b) {
+      for (uint32_t i=0; i<a.size(); i++)
+        if (a[i] != b[i])
+          return (a[i] > b[i]);
+      return (a[0] > b[0]);
+    }
+  };
+
+  inline double CMag2 (const std::complex<double> &z1, const std::complex<double> &z2)
+  {
+    return (z1.real()*z2.real() + z1.imag()*z2.imag());
+  }
+
+  inline double CMag (const std::complex<double> &z1, const std::complex<double> &z2)
+  {
+    return sqrt(CMag2(z1,z2));
+  }
+
   inline unsigned int factorial(const unsigned int x)
   {
     return (x == 1 ? x : x * factorial(x - 1));
