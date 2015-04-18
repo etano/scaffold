@@ -281,6 +281,16 @@ inline void IO::Rewrite(const std::string &dataset_name, std::string &data)
   delete file;
 }
 
-}}
+// Specialization for bools
+
+// Write
+template<>
+inline void IO::Write(const std::string &dataset_name, bool &t_data)
+{
+  int data = int(t_data);
+  Write(dataset_name, data);
+}
+
+}} // namespace
 
 #endif // SCAFFOLD_IO_IO_HDF5_H_

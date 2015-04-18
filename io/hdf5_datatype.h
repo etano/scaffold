@@ -39,7 +39,6 @@ struct HDF5TypeTraits {
   PRIMITIVE(unsigned int, H5::IntType, H5::PredType::NATIVE_UINT);
   PRIMITIVE(unsigned long, H5::IntType, H5::PredType::NATIVE_ULONG);
   PRIMITIVE(unsigned long long, H5::IntType, H5::PredType::NATIVE_ULLONG);
-  PRIMITIVE(bool, H5::IntType, H5::PredType::NATIVE_HBOOL);
   PRIMITIVE(std::complex<double>, H5::FloatType, H5::PredType::NATIVE_DOUBLE);
   PRIMITIVE(std::complex<float>, H5::FloatType, H5::PredType::NATIVE_FLOAT);
   PRIMITIVE(double, H5::FloatType, H5::PredType::NATIVE_DOUBLE);
