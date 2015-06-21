@@ -7,13 +7,12 @@
 namespace scaffold { namespace matrix {
 
 // Basic types
-template<class T> using vec = Eigen::Matrix<T, Eigen::Dynamic, 1>;
-template<class T> using mat = Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>;
-template<class T>
-class cube {
-  public:
+template<typename T> using vec = Eigen::Matrix<T, Eigen::Dynamic, 1>;
+template<typename T> using mat = Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>;
+template<typename T>
+struct cube {
     cube (int _n_rows, int _n_cols, int _n_slices)
-      : n_slices(_n_slices), n_rows(_n_rows), n_cols(_n_cols),data(_n_rows,_n_slices*_n_cols)
+      : n_slices(_n_slices), n_rows(_n_rows), n_cols(_n_cols), data(_n_rows,_n_slices*_n_cols)
     {}
 
     T& operator()(const int i, const int j, const int k)
@@ -33,10 +32,8 @@ class cube {
     int n_slices, n_rows, n_cols;
 };
 
-template<class T>
-class field {
-  
-  public:
+template<typename T>
+struct field {
     field () {}
 
     field (int _n_rows)
@@ -96,48 +93,32 @@ class field {
     std::vector<T> data_1d;
     std::vector< std::vector<T> > data_2d;
     int n_rows, n_cols, dim;
-
 };
 
 // Initialization
-template<class T>
+template<typename T>
 inline T identity(int i, int j) { return T::Identity(i,j); }
-
-template<class T>
-inline T ones(int i) { return T::Constant(i,1); }
-template<class T>
-inline T ones(int i, int j) { return T::Constant(i,j,1); }
-
-template<class T>
-inline T random(int i) { return T::Random(i); }
-template<class T>
-inline T random(int i, int j) { return T::Random(i,j); }
-
-template<class T>
-inline T zeros(int i) { return T::Zero(i); }
-template<class T>
-inline T zeros(int i, int j) { return T::Zero(i,j); }
+template<typename T, typename... Params>
+inline T ones(Params... parameters) { return T::Constant(parameters...,1); }
+template<typename T, typename... Params>
+inline T random(Params... parameters) { return T::Random(parameters...); }
+template<typename T, typename... Params>
+inline T zeros(Params... parameters) { return T::Zero(parameters...); }
 
 // Functions
 template <typename T>
 auto sum(T&& val) -> decltype(std::forward<T>(val).sum()) { return std::forward<T>(val).sum(); }
-
-template<class T>
+template<typename T>
 auto det(T&& val) -> decltype(std::forward<T>(val).determinant()) { return std::forward<T>(val).determinant(); }
-
-template<class T>
+template<typename T>
 auto inv(T&& val) -> decltype(std::forward<T>(val).inverse()) { return std::forward<T>(val).inverse(); }
-
-template<class T>
+template<typename T>
 inline bool inv(T &val1, T &val2) { val1 = val2.inverse(); return false; }
-
-template<class T>
+template<typename T>
 auto mag(T&& val) -> decltype(std::forward<T>(val).norm()) { return std::forward<T>(val).norm(); }
-
-template<class T>
+template<typename T>
 auto dot(T& val1, T& val2) -> decltype(val1.dot(val2)) { return val1.dot(val2); }
-
-template<class T>
+template<typename T>
 inline T solve(T &val1, T &val2) { return val1.fullPivLu().solve(val2); }
 
 }} // namespace
