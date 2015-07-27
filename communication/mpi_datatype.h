@@ -11,6 +11,7 @@
 
 namespace scaffold { namespace parallel {
 
+#if USE_MPI
 // Template to retrieve traits of any MPI object
 template <class T>
 struct MPITypeTraits {
@@ -87,6 +88,8 @@ struct MPITypeTraits {
     EIGENTYPE(matrix::mat<std::complex<float> >, std::complex<float>, MPI::COMPLEX);
     EIGENTYPE(matrix::vec<std::complex<float> >, std::complex<float>, MPI::COMPLEX);
   #undef EIGENTYPE
+#endif
+
 #endif
 
 }} // namespace
