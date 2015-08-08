@@ -81,26 +81,34 @@ struct Input
 
   }
 
-  void PrintXML(Node &my_node)
+  inline std::string GetName() { return node.name; }
+
+  std::string GetString()
+  {
+    std::stringstream ss;
+    AddToStream(node,ss);
+    return ss.str();
+  }
+
+  void AddToStream(Node &my_node, std::stringstream& ss)
   {
     // Print name
-    std::cout << "name: " << my_node.name << std::endl;
+    ss << "<" << my_node.name;
 
     // Print attributes
     for(auto attr: my_node.attributes)
-      std::cout << " " << attr.first << " : " << attr.second << std::endl;
+      ss << " " << attr.first << "=\"" << attr.second << "\"";
 
-    // Print children
-    for(auto& child: my_node.child_nodes)
-      PrintXML(child);
-  }
-
-  inline std::string GetName() { return node.name; }
-
-  inline std::string GetString()
-  {
-    std::string str(buffer.begin(), buffer.end());
-    return str;
+    // Print children if they exist
+    if (my_node.child_nodes.size() == 0)
+      ss << " />" << std::endl;
+    else {
+      ss << ">" << std::endl;
+      for(auto& child: my_node.child_nodes)
+        AddToStream(child,ss);
+      ss << "</" << my_node.name << ">" << std::endl;
+    }
+    //TODO: add indention
   }
 
   template <class T>
