@@ -217,7 +217,7 @@ public:
 
 // Read
 template<>
-inline void IO::Read(const std::string &dataset_name, std::string &data)
+void IO::Read(const std::string &dataset_name, std::string &data)
 {
   // Open file
   H5::H5File* file = new H5::H5File(file_name, H5F_ACC_RDONLY);
@@ -237,7 +237,7 @@ inline void IO::Read(const std::string &dataset_name, std::string &data)
 
 // Write
 template<>
-inline void IO::Write(const std::string &dataset_name, std::string &data)
+void IO::Write(const std::string &dataset_name, std::string &data)
 {
   // Open file
   H5::H5File* file = new H5::H5File(file_name, H5F_ACC_RDWR);
@@ -260,7 +260,7 @@ inline void IO::Write(const std::string &dataset_name, std::string &data)
 
 // Rewrite
 template<>
-inline void IO::Rewrite(const std::string &dataset_name, std::string &data)
+void IO::Rewrite(const std::string &dataset_name, std::string &data)
 {
   // Open file
   H5::H5File* file = new H5::H5File(file_name, H5F_ACC_RDWR);
@@ -285,7 +285,7 @@ inline void IO::Rewrite(const std::string &dataset_name, std::string &data)
 
 // Write
 template<>
-inline void IO::Write(const std::string &dataset_name, bool &t_data)
+void IO::Write(const std::string &dataset_name, bool &t_data)
 {
   int data = int(t_data);
   Write(dataset_name, data);

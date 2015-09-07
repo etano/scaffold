@@ -10,24 +10,24 @@ namespace scaffold { namespace io {
 template <class T>
 struct HDF5TypeTraits {
   static H5::PredType GetType(T& val);
-  static inline size_t GetSize(T& val);
-  static inline void* GetAddr(T& val);
-  static inline const int GetDim(T& val, int d);
-  static inline const int GetRank(T& val);
+  static size_t GetSize(T& val);
+  static void* GetAddr(T& val);
+  static const int GetDim(T& val, int d);
+  static const int GetRank(T& val);
 };
 
   // Specialization of HDF5TypeTraits for primitive types
 #define PRIMITIVE(Type, H5PredType, H5Type) \
         template<> \
-        inline H5::PredType HDF5TypeTraits<Type>::GetType(Type&) { return H5Type; } \
+        H5::PredType HDF5TypeTraits<Type>::GetType(Type&) { return H5Type; } \
         template<> \
-        inline size_t HDF5TypeTraits<Type>::GetSize(Type&) { return 1; } \
+        size_t HDF5TypeTraits<Type>::GetSize(Type&) { return 1; } \
         template<> \
-        inline void* HDF5TypeTraits<Type>::GetAddr(Type& val) { return &val; } \
+        void* HDF5TypeTraits<Type>::GetAddr(Type& val) { return &val; } \
         template<> \
-        inline const int HDF5TypeTraits<Type>::GetDim(Type& val, int d) { return 1; } \
+        const int HDF5TypeTraits<Type>::GetDim(Type& val, int d) { return 1; } \
         template<> \
-        inline const int HDF5TypeTraits<Type>::GetRank(Type& val) { return 0; }
+        const int HDF5TypeTraits<Type>::GetRank(Type& val) { return 0; }
   PRIMITIVE(char, H5::IntType, H5::PredType::NATIVE_CHAR);
   PRIMITIVE(std::string, H5::StrType, H5::PredType::NATIVE_CHAR);
   PRIMITIVE(short, H5::IntType, H5::PredType::NATIVE_SHORT);
@@ -49,15 +49,15 @@ struct HDF5TypeTraits {
 #ifdef USE_ARMADILLO
   #define ARMATYPE(Type, ElemType, H5PredType, H5Type) \
           template<> \
-          inline H5::PredType HDF5TypeTraits<Type>::GetType(Type&) { return H5Type; } \
+          H5::PredType HDF5TypeTraits<Type>::GetType(Type&) { return H5Type; } \
           template<> \
-          inline size_t HDF5TypeTraits<Type>::GetSize(Type& val) { return val.size(); } \
+          size_t HDF5TypeTraits<Type>::GetSize(Type& val) { return val.size(); } \
           template<> \
-          inline void* HDF5TypeTraits<Type>::GetAddr(Type& val) { return val.memptr(); } \
+          void* HDF5TypeTraits<Type>::GetAddr(Type& val) { return val.memptr(); } \
           template<> \
-          inline const int HDF5TypeTraits<Type>::GetDim(Type& val, int d) { if (d == 0) { return val.n_rows; } else { return val.n_cols; } } \
+          const int HDF5TypeTraits<Type>::GetDim(Type& val, int d) { if (d == 0) { return val.n_rows; } else { return val.n_cols; } } \
           template<> \
-          inline const int HDF5TypeTraits<Type>::GetRank(Type& val) { return 1; }
+          const int HDF5TypeTraits<Type>::GetRank(Type& val) { return 1; }
     ARMATYPE(matrix::vec<int>, int, H5::IntType, H5::PredType::NATIVE_INT);
     ARMATYPE(matrix::vec<unsigned int>, unsigned int, H5::IntType, H5::PredType::NATIVE_UINT);
     ARMATYPE(matrix::vec<float>, float, H5::FloatType, H5::PredType::NATIVE_FLOAT);
@@ -66,15 +66,15 @@ struct HDF5TypeTraits {
 
   #define ARMATYPE(Type, ElemType, H5PredType, H5Type) \
           template<> \
-          inline H5::PredType HDF5TypeTraits<Type>::GetType(Type&) { return H5Type; } \
+          H5::PredType HDF5TypeTraits<Type>::GetType(Type&) { return H5Type; } \
           template<> \
-          inline size_t HDF5TypeTraits<Type>::GetSize(Type& val) { return val.size(); } \
+          size_t HDF5TypeTraits<Type>::GetSize(Type& val) { return val.size(); } \
           template<> \
-          inline void* HDF5TypeTraits<Type>::GetAddr(Type& val) { return val.memptr(); } \
+          void* HDF5TypeTraits<Type>::GetAddr(Type& val) { return val.memptr(); } \
           template<> \
-          inline const int HDF5TypeTraits<Type>::GetDim(Type& val, int d) { if (d == 0) { return val.n_cols; } else { return val.n_rows; } } \
+          const int HDF5TypeTraits<Type>::GetDim(Type& val, int d) { if (d == 0) { return val.n_cols; } else { return val.n_rows; } } \
           template<> \
-          inline const int HDF5TypeTraits<Type>::GetRank(Type& val) { return 2; }
+          const int HDF5TypeTraits<Type>::GetRank(Type& val) { return 2; }
     ARMATYPE(matrix::mat<int>, int, H5::IntType, H5::PredType::NATIVE_INT);
     ARMATYPE(matrix::mat<unsigned int>, unsigned int, H5::IntType, H5::PredType::NATIVE_UINT);
     ARMATYPE(matrix::mat<float>, float, H5::FloatType, H5::PredType::NATIVE_FLOAT);
@@ -83,15 +83,15 @@ struct HDF5TypeTraits {
 
   #define ARMATYPE(Type, ElemType, H5PredType, H5Type) \
           template<> \
-          inline H5::PredType HDF5TypeTraits<Type>::GetType(Type&) { return H5Type; } \
+          H5::PredType HDF5TypeTraits<Type>::GetType(Type&) { return H5Type; } \
           template<> \
-          inline size_t HDF5TypeTraits<Type>::GetSize(Type& val) { return val.size(); } \
+          size_t HDF5TypeTraits<Type>::GetSize(Type& val) { return val.size(); } \
           template<> \
-          inline void* HDF5TypeTraits<Type>::GetAddr(Type& val) { return val.memptr(); } \
+          void* HDF5TypeTraits<Type>::GetAddr(Type& val) { return val.memptr(); } \
           template<> \
-          inline const int HDF5TypeTraits<Type>::GetDim(Type& val, int d) { if (d == 0) { return val.n_slices; } else if (d == 1) { return val.n_cols; } else { return val.n_rows; } } \
+          const int HDF5TypeTraits<Type>::GetDim(Type& val, int d) { if (d == 0) { return val.n_slices; } else if (d == 1) { return val.n_cols; } else { return val.n_rows; } } \
           template<> \
-          inline const int HDF5TypeTraits<Type>::GetRank(Type& val) { return 3; }
+          const int HDF5TypeTraits<Type>::GetRank(Type& val) { return 3; }
     ARMATYPE(matrix::cube<int>, int, H5::IntType, H5::PredType::NATIVE_INT);
     ARMATYPE(matrix::cube<unsigned int>, unsigned int, H5::IntType, H5::PredType::NATIVE_UINT);
     ARMATYPE(matrix::cube<float>, float, H5::FloatType, H5::PredType::NATIVE_FLOAT);
@@ -103,15 +103,15 @@ struct HDF5TypeTraits {
 #ifdef USE_EIGEN
   #define EIGENTYPE(Type, ElemType, H5PredType, H5Type) \
           template<> \
-          inline H5::PredType HDF5TypeTraits<Type>::GetType(Type&) { return H5Type; } \
+          H5::PredType HDF5TypeTraits<Type>::GetType(Type&) { return H5Type; } \
           template<> \
-          inline size_t HDF5TypeTraits<Type>::GetSize(Type& val) { return val.size(); } \
+          size_t HDF5TypeTraits<Type>::GetSize(Type& val) { return val.size(); } \
           template<> \
-          inline void* HDF5TypeTraits<Type>::GetAddr(Type& val) { return val.data(); } \
+          void* HDF5TypeTraits<Type>::GetAddr(Type& val) { return val.data(); } \
           template<> \
-          inline const int HDF5TypeTraits<Type>::GetDim(Type& val, int d) { if (d == 0) { return val.rows(); } else { return val.cols(); } } \
+          const int HDF5TypeTraits<Type>::GetDim(Type& val, int d) { if (d == 0) { return val.rows(); } else { return val.cols(); } } \
           template<> \
-          inline const int HDF5TypeTraits<Type>::GetRank(Type& val) { return 1; }
+          const int HDF5TypeTraits<Type>::GetRank(Type& val) { return 1; }
     EIGENTYPE(matrix::vec<int>, int, H5::IntType, H5::PredType::NATIVE_INT);
     EIGENTYPE(matrix::vec<unsigned int>, unsigned int, H5::IntType, H5::PredType::NATIVE_UINT);
     EIGENTYPE(matrix::vec<float>, float, H5::FloatType, H5::PredType::NATIVE_FLOAT);
@@ -120,15 +120,15 @@ struct HDF5TypeTraits {
 
   #define EIGENTYPE(Type, ElemType, H5PredType, H5Type) \
           template<> \
-          inline H5::PredType HDF5TypeTraits<Type>::GetType(Type&) { return H5Type; } \
+          H5::PredType HDF5TypeTraits<Type>::GetType(Type&) { return H5Type; } \
           template<> \
-          inline size_t HDF5TypeTraits<Type>::GetSize(Type& val) { return val.size(); } \
+          size_t HDF5TypeTraits<Type>::GetSize(Type& val) { return val.size(); } \
           template<> \
-          inline void* HDF5TypeTraits<Type>::GetAddr(Type& val) { return val.data(); } \
+          void* HDF5TypeTraits<Type>::GetAddr(Type& val) { return val.data(); } \
           template<> \
-          inline const int HDF5TypeTraits<Type>::GetDim(Type& val, int d) { if (d == 0) { return val.cols(); } else { return val.rows(); } } \
+          const int HDF5TypeTraits<Type>::GetDim(Type& val, int d) { if (d == 0) { return val.cols(); } else { return val.rows(); } } \
           template<> \
-          inline const int HDF5TypeTraits<Type>::GetRank(Type& val) { return 2; }
+          const int HDF5TypeTraits<Type>::GetRank(Type& val) { return 2; }
     EIGENTYPE(matrix::mat<int>, int, H5::IntType, H5::PredType::NATIVE_INT);
     EIGENTYPE(matrix::mat<unsigned int>, unsigned int, H5::IntType, H5::PredType::NATIVE_UINT);
     EIGENTYPE(matrix::mat<float>, float, H5::FloatType, H5::PredType::NATIVE_FLOAT);
@@ -137,15 +137,15 @@ struct HDF5TypeTraits {
 
   #define EIGENTYPE(Type, ElemType, H5PredType, H5Type) \
           template<> \
-          inline H5::PredType HDF5TypeTraits<Type>::GetType(Type&) { return H5Type; } \
+          H5::PredType HDF5TypeTraits<Type>::GetType(Type&) { return H5Type; } \
           template<> \
-          inline size_t HDF5TypeTraits<Type>::GetSize(Type& val) { return val.data.size(); } \
+          size_t HDF5TypeTraits<Type>::GetSize(Type& val) { return val.data.size(); } \
           template<> \
-          inline void* HDF5TypeTraits<Type>::GetAddr(Type& val) { return val.data.data(); } \
+          void* HDF5TypeTraits<Type>::GetAddr(Type& val) { return val.data.data(); } \
           template<> \
-          inline const int HDF5TypeTraits<Type>::GetDim(Type& val, int d) { if (d == 0) { return val.n_rows; } else if (d == 1) { return val.n_cols; } else { return val.n_slices; } } \
+          const int HDF5TypeTraits<Type>::GetDim(Type& val, int d) { if (d == 0) { return val.n_rows; } else if (d == 1) { return val.n_cols; } else { return val.n_slices; } } \
           template<> \
-          inline const int HDF5TypeTraits<Type>::GetRank(Type& val) { return 3; }
+          const int HDF5TypeTraits<Type>::GetRank(Type& val) { return 3; }
     EIGENTYPE(matrix::cube<int>, int, H5::IntType, H5::PredType::NATIVE_INT);
     EIGENTYPE(matrix::cube<unsigned int>, unsigned int, H5::IntType, H5::PredType::NATIVE_UINT);
     EIGENTYPE(matrix::cube<float>, float, H5::FloatType, H5::PredType::NATIVE_FLOAT);
