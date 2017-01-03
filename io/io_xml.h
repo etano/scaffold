@@ -124,9 +124,10 @@ struct Input
   template <class T>
   inline T GetAttribute(std::string name, T deflt)
   {
-    if (node.attributes.find(name) == node.attributes.end())
+    if (node.attributes.find(name) == node.attributes.end()) {
+      std::cerr << "WARNING: Using default value " << deflt << " for attribute " << name << std::endl;
       return deflt;
-    else
+    } else
       return ConvertConstChar<T>(node.attributes[name].c_str());
   }
 
